@@ -29,7 +29,19 @@ public class videoDetails {
 			URL search_url = new URL("https://www.googleapis.com/youtube/v3/search?key=AIzaSyAYvenm2DLFO9BU2lm9HEtjvR3BxJiX7cw&q=" + query + "&type=video&part=snippet&maxResults=" + results);
 			
 			videoIds = videoids(videoIds, query, results, search_url);
-			System.out.println(videoIds);
+			//System.out.println(videoIds);
+			
+			JSONObject json = new JSONObject();
+			
+			for(int i=0; i<videoIds.size() ;i++) {
+				String videoId = videoIds.get(i);
+				URL video_url = new URL("https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=" + videoId + "&key=AIzaSyAYvenm2DLFO9BU2lm9HEtjvR3BxJiX7cw");
+				JSONObject jsonObj = videoData(video_url);
+				json.put(videoId,jsonObj);
+			}
+			
+			System.out.println(json.toString());
+			
 		} catch (MalformedURLException e) {
 			throw e;
 		} catch (IOException e) {
@@ -37,6 +49,27 @@ public class videoDetails {
 			e.printStackTrace();
 		}
 		}
+
+
+	private static JSONObject videoData(URL video_url) throws IOException {
+		// TODO Auto-generated method stub
+		URLConnection conn = video_url.openConnection();
+		conn.connect();
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		StringBuilder sb = new StringBuilder();
+		
+		String lines;
+		while ((lines = br.readLine()) != null) {
+			sb.append(lines + "\n");
+		}
+		
+		br.close();
+		
+		
+		JSONObject jsonObj = new JSONObject(sb.toString());
+		return jsonObj;
+	}
 
 
 	private static List<String> videoids(List<String> videoIds, String query, int results, URL search_url) throws IOException {
