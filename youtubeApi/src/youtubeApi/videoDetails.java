@@ -1,6 +1,7 @@
 package youtubeApi;
 
 import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -15,8 +16,12 @@ import org.json.JSONObject;
 
 public class videoDetails {
 	
+	private static final boolean True = true;
+	private static final boolean False = false;
+
+
 	// method to gather video data using video id's
-	private static JSONObject videoData(URL video_url) throws IOException {
+	public static JSONObject videoData(URL video_url) throws IOException {
 		// TODO Auto-generated method stub
 		URLConnection conn = video_url.openConnection();
 		conn.connect();
@@ -38,7 +43,7 @@ public class videoDetails {
 
 
 	// method to collect video id's from the search result
-	private static List<String> videoids(List<String> videoIds, String query, int results, URL search_url) throws IOException {
+	public static List<String> videoids(List<String> videoIds,int results, URL search_url) throws IOException {
 		// TODO Auto-generated method stub
 		
 		URLConnection conn = search_url.openConnection();
@@ -67,45 +72,74 @@ public class videoDetails {
 		return videoIds; // returns video id's
 		
 	}
+	
+	public static String inputAndoutput(String query, int results) throws MalformedURLException{
+		
+		try  {
+				List<String> videoIds = new ArrayList<String>();
+			
+				URL search_url = new URL("https://www.googleapis.com/youtube/v3/search?key=AIzaSyAYvenm2DLFO9BU2lm9HEtjvR3BxJiX7cw&q=" + query + "&type=video&part=snippet&maxResults=" + results);
+				
+				// call 'videoids' method to collect video id's of related videos
+				videoIds = videoids(videoIds, results, search_url);
+				//System.out.println(videoIds);
+				
+				JSONObject json = new JSONObject(); // create a json object to store the video data
+				
+				// loop through the videoids list 			
+				for(int i=0; i<videoIds.size() ;i++) {
+					String videoId = videoIds.get(i);
+					// call video_url by inserting video id's and load data into json object
+					URL video_url = new URL("https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=" + videoId + "&key=AIzaSyAYvenm2DLFO9BU2lm9HEtjvR3BxJiX7cw");
+					JSONObject jsonObj = videoData(video_url);		//call videodata method by passing video_url
+					json.put(videoId,jsonObj); // load video data into json object as video id and video data pair
+				}
+				
+				// Write json object into a file
+			      try (FileWriter file = new FileWriter("D:/video_data.json")) {
+			          file.write(json.toString());
+			      }
 
-	public static void main(String[] args) throws MalformedURLException {
-		// TODO Auto-generated method stub
-		
-		// create a list to store videoIds
-		List<String> videoIds = new ArrayList<String>();
-		
-		
-		try (Scanner scan = new Scanner(System.in)) {
-			System.out.print("Enter text to search: ");  
-			String query= scan.nextLine();              //create a variable to store user input text
-			
-			System.out.print("Enter the number of results you want");  
-			int results= scan.nextInt();  //create a variable to store user input results
-			
-			URL search_url = new URL("https://www.googleapis.com/youtube/v3/search?key=AIzaSyAYvenm2DLFO9BU2lm9HEtjvR3BxJiX7cw&q=" + query + "&type=video&part=snippet&maxResults=" + results);
-			
-			// call 'videoids' method to collect video id's of related videos
-			videoIds = videoids(videoIds, query, results, search_url);
-			//System.out.println(videoIds);
-			
-			JSONObject json = new JSONObject(); // create a json object to store the video data
-			
-			// loop through the videoids list 			
-			for(int i=0; i<videoIds.size() ;i++) {
-				String videoId = videoIds.get(i);
-				// call video_url by inserting video id's and load data into json object
-				URL video_url = new URL("https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=" + videoId + "&key=AIzaSyAYvenm2DLFO9BU2lm9HEtjvR3BxJiX7cw");
-				JSONObject jsonObj = videoData(video_url);		//call videodata method by passing video_url
-				json.put(videoId,jsonObj); // load video data into json object as video id and video data pair
-			}
-			
-			System.out.println(json.toString());
-			
 		} catch (MalformedURLException e) {
 			throw e;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		return ("The File has been created");
+	}
+	
+	public static boolean checkresults(int r) {
+		if(r > 10) {
+			System.out.println("The results cannot be greater than 10. Please input a number less than or equal to 10");
+			return False;
+		}
+		else if(r == 0 || r < 0){
+			System.out.println("The results cannot be 0 or less than 0. Please input a number greater than 0");
+			return False;
+		}
+		else {
+		return True;
+		}
+	}
+		
+
+	public static void main(String[] args) throws MalformedURLException{
+		try (Scanner scan = new Scanner(System.in)) {
+			//create a variable to store user input text
+			System.out.print("Enter text to search: "); 
+			String query = scan.nextLine();
+			//create a variable to store user input results
+			int t = 0;
+			while( t == 0) {
+				System.out.print("Enter the number of results you want: ");
+				int results = scan.nextInt();
+				if(checkresults(results)) {
+					String output = inputAndoutput(query, results);
+					System.out.println(output);
+					t = 1;
+				}
+			}
 		}
 	}
 }
