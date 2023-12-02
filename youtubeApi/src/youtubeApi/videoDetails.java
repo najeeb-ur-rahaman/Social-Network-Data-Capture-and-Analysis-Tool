@@ -36,7 +36,7 @@ public class videoDetails {
 		
 		br.close();
 		
-		
+		// json object to store API response
 		JSONObject jsonObj = new JSONObject(sb.toString());
 		return jsonObj; //json object of video data
 	}
@@ -59,10 +59,11 @@ public class videoDetails {
 		
 		br.close();
 		
+		//json object to store API response
 		JSONObject jsonObj = new JSONObject(sb.toString());
 		JSONArray items = jsonObj.getJSONArray("items");
 		
-		// loop through the results to collect video id's
+		// loop through the response to collect video id's
 		for (int i = 0; i < results; i++) {
 			
 			JSONObject id = items.getJSONObject(i).getJSONObject("id");
@@ -78,6 +79,7 @@ public class videoDetails {
 		try  {
 				List<String> videoIds = new ArrayList<String>();
 			
+				// URL to search videos related to search query
 				URL search_url = new URL("https://www.googleapis.com/youtube/v3/search?key=AIzaSyAYvenm2DLFO9BU2lm9HEtjvR3BxJiX7cw&q=" + query + "&type=video&part=snippet&maxResults=" + results);
 				
 				// call 'videoids' method to collect video id's of related videos
