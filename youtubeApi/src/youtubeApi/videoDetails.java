@@ -73,7 +73,7 @@ public class videoDetails {
 		
 	}
 	
-	public static String inputAndoutput(String query, int results) throws MalformedURLException{
+	public static String output(String query, int results) throws MalformedURLException{
 		
 		try  {
 				List<String> videoIds = new ArrayList<String>();
@@ -106,7 +106,7 @@ public class videoDetails {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return ("The File has been created");
+		return ("The File has been created. Go to 'D:/video_data.json'. To view the file");
 	}
 	
 	public static boolean checkresults(int r) {
@@ -122,24 +122,29 @@ public class videoDetails {
 		return True;
 		}
 	}
-		
-
-	public static void main(String[] args) throws MalformedURLException{
+	
+	public static String input() throws MalformedURLException{
 		try (Scanner scan = new Scanner(System.in)) {
 			//create a variable to store user input text
 			System.out.print("Enter text to search: "); 
 			String query = scan.nextLine();
+			String output = null;
 			//create a variable to store user input results
 			int t = 0;
 			while( t == 0) {
 				System.out.print("Enter the number of results you want: ");
 				int results = scan.nextInt();
 				if(checkresults(results)) {
-					String output = inputAndoutput(query, results);
-					System.out.println(output);
+					output = output(query, results);
 					t = 1;
 				}
 			}
+			return output;
 		}
+	}
+
+	public static void main(String[] args) throws MalformedURLException{
+		String end = input();
+		System.out.println(end);
 	}
 }

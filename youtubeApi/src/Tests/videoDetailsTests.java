@@ -15,9 +15,19 @@ public class videoDetailsTests {
 	
 
 	@Test
+	public void testiutputString() {
+		try {
+			assertEquals("The File has been created. Go to 'D:/video_data.json'. To view the file",videoDetails.input());
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
 	public void testOutputString() {
 		try {
-			assertEquals("The File has been created",videoDetails.inputAndoutput("najeeb", 4));
+			assertEquals("The File has been created. Go to 'D:/video_data.json'. To view the file",videoDetails.output("najeeb", 4));
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -60,6 +70,7 @@ public class videoDetailsTests {
 	    URL url = new URL("https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=Hwi9dsFBuhg&");
 		videoDetails.videoids(videoIds, 10, url);
 	}
+	
 	
 	@Test 
 	public void testcheckresultsequalto0(){
