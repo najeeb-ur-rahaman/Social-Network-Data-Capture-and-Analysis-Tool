@@ -1,6 +1,7 @@
 package Tests;
 
 import static org.junit.Assert.*;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,7 +14,6 @@ import youtubeApi.videoDetails;
 
 public class videoDetailsTests {
 	
-
 	@Test //Test for the input method
 	public void testiutputString() {
 		try {
@@ -44,6 +44,11 @@ public class videoDetailsTests {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	@Test //Test for the getKey method
+	public void testtogetKey() throws MalformedURLException, IOException {
+	    assertNotNull(videoDetails.getAPIkey());
 	}
 	
 	@Test (expected = IOException.class) //Test for Search URL

@@ -1,6 +1,8 @@
 package youtubeApi;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,6 +11,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
 
 import org.json.JSONArray;
@@ -74,33 +77,52 @@ public class videoDetails {
 		
 	}
 	
+	public static String getAPIkey() {
+		String key = null;
+        try (InputStream input = new FileInputStream("resources/config.properties")) {
+
+            Properties prop = new Properties();
+
+            // load a properties file
+            prop.load(input);
+
+            // get the property value and print it out
+            key = prop.getProperty("key");
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+		return key;
+	}
+	
 	public static String output(String query, int results) throws MalformedURLException{
 		
 		try  {
-				List<String> videoIds = new ArrayList<String>();
+			String key = getAPIkey();
+			List<String> videoIds = new ArrayList<String>();
+		
+			// URL to search videos related to search query
+			URL search_url = new URL("https://www.googleapis.com/youtube/v3/search?key=" + key + "&q=" + query + "&type=video&part=snippet&maxResults=" + results);
 			
-				// URL to search videos related to search query
-				URL search_url = new URL("https://www.googleapis.com/youtube/v3/search?key=AIzaSyAYvenm2DLFO9BU2lm9HEtjvR3BxJiX7cw&q=" + query + "&type=video&part=snippet&maxResults=" + results);
-				
-				// call 'videoids' method to collect video id's of related videos
-				videoIds = videoids(videoIds, results, search_url);
-				//System.out.println(videoIds);
-				
-				JSONObject json = new JSONObject(); // create a json object to store the video data
-				
-				// loop through the videoids list 			
-				for(int i=0; i<videoIds.size() ;i++) {
-					String videoId = videoIds.get(i);
-					// call video_url by inserting video id's and load data into json object
-					URL video_url = new URL("https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=" + videoId + "&key=AIzaSyAYvenm2DLFO9BU2lm9HEtjvR3BxJiX7cw");
-					JSONObject jsonObj = videoData(video_url);		//call videodata method by passing video_url
-					json.put(videoId,jsonObj); // load video data into json object as video id and video data pair
-				}
-				
-				// Write json object into a file
-			      try (FileWriter file = new FileWriter("D:/video_data.json")) {
-			          file.write(json.toString());
-			      }
+			// call 'videoids' method to collect video id's of related videos
+			videoIds = videoids(videoIds, results, search_url);
+			//System.out.println(videoIds);
+			
+			JSONObject json = new JSONObject(); // create a json object to store the video data
+			
+			// loop through the videoids list 			
+			for(int i=0; i<videoIds.size() ;i++) {
+				String videoId = videoIds.get(i);
+				// call video_url by inserting video id's and load data into json object
+				URL video_url = new URL("https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=" + videoId + "&key=" + key);
+				JSONObject jsonObj = videoData(video_url);		//call videodata method by passing video_url
+				json.put(videoId,jsonObj); // load video data into json object as video id and video data pair
+			}
+			
+			// Write json object into a file
+		      try (FileWriter file = new FileWriter("D:/video_data.json")) {
+		          file.write(json.toString());
+		      }
 
 		} catch (MalformedURLException e) {
 			throw e;
