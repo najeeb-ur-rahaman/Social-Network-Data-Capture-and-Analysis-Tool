@@ -1,5 +1,7 @@
 package youtubeAnalysis;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,10 +13,9 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
-import java.awt.BorderLayout;
-import java.awt.Color;
 
-public class CommentsAnalysis extends JFrame {
+
+public class durationAnalysis extends JFrame {	
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -24,6 +25,7 @@ public class CommentsAnalysis extends JFrame {
 	 * @throws SQLException 
 	 */
 	public static void main(String[] args) throws SQLException {
+		
 		try {
 			
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -31,10 +33,10 @@ public class CommentsAnalysis extends JFrame {
 		} 
 		catch (ClassNotFoundException e) {			
 			e.printStackTrace();
-		}		
-		
+		}
+
 		//Connecting to database
-		ResultSet results = databaseConnection.databaseConnectionMethod("comments");
+		ResultSet results = databaseConnection.databaseConnectionMethod("duration");		
 		
 		//Fetching and storing data from database
 		fetchData.fetchDataMethod(results);	
@@ -42,7 +44,7 @@ public class CommentsAnalysis extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					CommentsAnalysis frame = new CommentsAnalysis();
+					durationAnalysis frame = new durationAnalysis();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -53,10 +55,10 @@ public class CommentsAnalysis extends JFrame {
 
 	/**
 	 * Create the frame.
-	 */
-	public CommentsAnalysis() {
+	 */	
+	public durationAnalysis() {
 		setResizable(false);
-		setTitle("Comments Analysis");
+		setTitle("Duration Analysis");
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 500);
@@ -70,29 +72,30 @@ public class CommentsAnalysis extends JFrame {
 		panel.setBounds(10, 10, 766, 443);
 		contentPane.add(panel);
 		
-		//Creating dataset to feed data to the bar chart
+		//Creating data set for the line chart
+		
 		DefaultCategoryDataset dataSet=new DefaultCategoryDataset();
+		for(int i=0; i<fetchData.videoTitles.size();i++) {						
+			dataSet.addValue(fetchData.videoValueInt.get(i),fetchData.videoValue.get(i),fetchData.videoTitles.get(i));		
+			}
 		
-		for(int i=0; i<fetchData.videoTitles.size();i++) {			
-		dataSet.addValue(fetchData.videoValueInt.get(i),fetchData.videoValue.get(i),fetchData.videoTitles.get(i));		
-		}				
+	
+		//Creating the bar chart
 		
-		//Creating the bar graph		
-		JFreeChart barChart1 = ChartFactory.createBarChart3D("Bar Graph of number of comments", "Videos", "Comments", dataSet,PlotOrientation.VERTICAL, true, true, false);
+		JFreeChart barChart = ChartFactory.createStackedBarChart3D("Bar Graph of video's Duration", "Videos", "Duration (in minutes)", dataSet,PlotOrientation.VERTICAL, true, true, false);
 		
-		CategoryPlot plot1 = barChart1.getCategoryPlot();		 
+		CategoryPlot plot1 = barChart.getCategoryPlot();		 
 		plot1.setBackgroundPaint(Color.WHITE);
-		plot1.setRangeGridlinePaint(Color.black);
+		plot1.setRangeGridlinePaint(Color.black);	
 		
 		BarRenderer barrenderer = (BarRenderer) plot1.getRenderer();		
 		Color clr = new Color(250, 255 ,51);
 		barrenderer.setSeriesPaint(0,clr);
 		
 		//Creating the panel to display the bar graph
-		ChartPanel chartPanel1 = new ChartPanel(barChart1, true);		
-		chartPanel1.setVisible(true);
-		panel.add(chartPanel1,BorderLayout.CENTER);
-		chartPanel1.setLayout(new BorderLayout(0, 0));		
-		
+		ChartPanel chartPanel1 = new ChartPanel(barChart);	
+		chartPanel1.setVisible(true);		
+		panel.add(chartPanel1,BorderLayout.CENTER);		
 	}
+
 }
