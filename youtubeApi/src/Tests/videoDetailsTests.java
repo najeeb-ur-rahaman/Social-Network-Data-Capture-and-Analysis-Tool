@@ -2,17 +2,39 @@ package Tests;
 
 import static org.junit.Assert.*;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.junit.Test;
 
 import youtubeApi.videoDetails;
 
 public class videoDetailsTests {
+	
+	public static String key;
+	
+	// Method to get API key from config.properties
+	public static void getAPIkey() {
+        try (InputStream input = new FileInputStream("resources/config.properties")) {
+
+            Properties prop = new Properties();
+
+            // load a properties file
+            prop.load(input);
+
+            // get the property value and print it out
+            key = prop.getProperty("key");
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+	}
 	
 	@Test //Test for the input method
 	public void testiutputString() {
@@ -37,7 +59,8 @@ public class videoDetailsTests {
 	@Test //Test for the video ID method
 	public void testVideoIdsNotNull() throws MalformedURLException {
 		List<String> videoIds = new ArrayList<String>();
-	    URL url = new URL("https://www.googleapis.com/youtube/v3/search?key=AIzaSyAYvenm2DLFO9BU2lm9HEtjvR3BxJiX7cw&q=sruthi&type=video&part=snippet&maxResults=50");
+		getAPIkey();
+	    URL url = new URL("https://www.googleapis.com/youtube/v3/search?key=" + key + "&q=sruthi&type=video&part=snippet&maxResults=50");
 		try {
 			assertNotNull(videoDetails.videoids(videoIds, 10, url));
 		} catch (IOException e) {
@@ -60,7 +83,8 @@ public class videoDetailsTests {
 	
 	@Test //Test for Video Data method
 	public void testJsonNotNull() throws MalformedURLException {
-		URL url2 = new URL("https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=Hwi9dsFBuhg&key=AIzaSyAYvenm2DLFO9BU2lm9HEtjvR3BxJiX7cw");
+		getAPIkey();
+		URL url2 = new URL("https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=Hwi9dsFBuhg&key=" + key);
 		try {
 			assertNotNull(videoDetails.videoData(url2));
 		} catch (IOException e) {

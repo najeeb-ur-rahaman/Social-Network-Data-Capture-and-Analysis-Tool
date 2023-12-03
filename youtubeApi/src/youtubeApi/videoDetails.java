@@ -77,6 +77,7 @@ public class videoDetails {
 		
 	}
 	
+	// Method to get API key from config.properties file
 	public static String getAPIkey() {
 		String key = null;
         try (InputStream input = new FileInputStream("resources/config.properties")) {
@@ -95,6 +96,7 @@ public class videoDetails {
 		return key;
 	}
 	
+	// method to generate output file
 	public static String output(String query, int results) throws MalformedURLException{
 		
 		try  {
@@ -133,6 +135,7 @@ public class videoDetails {
 		return ("The File has been created. Go to 'D:/video_data.json'. To view the file");
 	}
 	
+	// Method to check if entered input is valid
 	public static boolean checkresults(int r) {
 		if(r > 10) {
 			System.out.println("The results cannot be greater than 10. Please input a number less than or equal to 10");
@@ -147,6 +150,7 @@ public class videoDetails {
 		}
 	}
 	
+	// Method to take user input
 	public static String input() throws MalformedURLException{
 		try (Scanner scan = new Scanner(System.in)) {
 			//create a variable to store user input text
@@ -167,6 +171,7 @@ public class videoDetails {
 		}
 	}
 
+	// Main method
 	public static void main(String[] args) throws MalformedURLException{
 		String end = input();
 		System.out.println(end);
