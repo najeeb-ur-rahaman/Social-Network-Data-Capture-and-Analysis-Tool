@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry including="**/*.java" kind="src" output="target/classes" path="src">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/sanju/OneDrive/Desktop/smqa Project/workspace/youtubeAnalysis/jar files/jcommon-1.0.23.jar"/>
 	<classpathentry kind="lib" path="C:/Users/sanju/OneDrive/Desktop/smqa Project/workspace/youtubeAnalysis/jar files/jfreechart-1.0.19.jar"/>
 	<classpathentry kind="lib" path="C:/Users/sanju/OneDrive/Desktop/smqa Project/workspace/youtubeAnalysis/jar files/mssql-jdbc-12.4.2.jre8.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/sanju/Downloads/stanford-corenlp-4.5.5/stanford-corenlp-4.5.5/stanford-corenlp-4.5.5.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

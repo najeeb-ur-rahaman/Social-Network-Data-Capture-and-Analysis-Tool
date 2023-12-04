@@ -65,6 +65,7 @@ public class CommentsAnalysis extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
+		//Background Panel
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(255, 255, 255));
 		panel.setBounds(10, 10, 766, 443);
