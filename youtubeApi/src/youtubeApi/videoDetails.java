@@ -22,6 +22,13 @@ public class videoDetails {
 	private static final boolean True = true;
 	private static final boolean False = false;
 
+	// create a public variable to store video id's
+	public static List<String> videoIds = new ArrayList<String>();
+	
+	public static List<String> getVideoIds() {
+		List<String> vdi = videoIds;
+		return vdi;
+	}
 
 	// method to gather video data using video id's
 	public static JSONObject videoData(URL video_url) throws IOException {
@@ -101,7 +108,6 @@ public class videoDetails {
 		
 		try  {
 			String key = getAPIkey();
-			List<String> videoIds = new ArrayList<String>();
 		
 			// URL to search videos related to search query
 			URL search_url = new URL("https://www.googleapis.com/youtube/v3/search?key=" + key + "&q=" + query + "&type=video&part=snippet&maxResults=" + results);
@@ -174,6 +180,7 @@ public class videoDetails {
 	// Main method
 	public static void main(String[] args) throws MalformedURLException{
 		String end = input();
+		System.out.println(videoIds);
 		System.out.println(end);
 	}
 }
