@@ -21,17 +21,35 @@ public class videoDetails {
 	
 	private static final boolean True = true;
 	private static final boolean False = false;
+	
+	public static String query;
+	public static int results;
+	public static Scanner scan = new Scanner(System.in);
 
 	// create a public variable to store video id's
 	public static List<String> videoIds = new ArrayList<String>();
 	
-	public static List<String> getVideoIds() {
-		List<String> vdi = videoIds;
-		return vdi;
+	// Method to get API key from config.properties file
+	public static String getAPIkey() {
+		String key = null;
+        try (InputStream input = new FileInputStream("resources/config.properties")) {
+
+            Properties prop = new Properties();
+
+            // load a properties file
+            prop.load(input);
+
+            // get the property value and print it out
+            key = prop.getProperty("key");
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+		return key;
 	}
 
 	// method to gather video data using video id's
-	public static JSONObject videoData(URL video_url) throws IOException {
+	public static JSONObject outputData(URL video_url) throws IOException {
 		// TODO Auto-generated method stub
 		URLConnection conn = video_url.openConnection();
 		conn.connect();
@@ -84,25 +102,6 @@ public class videoDetails {
 		
 	}
 	
-	// Method to get API key from config.properties file
-	public static String getAPIkey() {
-		String key = null;
-        try (InputStream input = new FileInputStream("resources/config.properties")) {
-
-            Properties prop = new Properties();
-
-            // load a properties file
-            prop.load(input);
-
-            // get the property value and print it out
-            key = prop.getProperty("key");
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-		return key;
-	}
-	
 	// method to generate output file
 	public static String output(String query, int results) throws MalformedURLException{
 		
@@ -123,7 +122,7 @@ public class videoDetails {
 				String videoId = videoIds.get(i);
 				// call video_url by inserting video id's and load data into json object
 				URL video_url = new URL("https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=" + videoId + "&key=" + key);
-				JSONObject jsonObj = videoData(video_url);		//call videodata method by passing video_url
+				JSONObject jsonObj = outputData(video_url);		//call videodata method by passing video_url
 				json.put(videoId,jsonObj); // load video data into json object as video id and video data pair
 			}
 			
@@ -158,29 +157,28 @@ public class videoDetails {
 	
 	// Method to take user input
 	public static String input() throws MalformedURLException{
-		try (Scanner scan = new Scanner(System.in)) {
 			//create a variable to store user input text
-			System.out.print("Enter text to search: "); 
-			String query = scan.nextLine();
-			String output = null;
-			//create a variable to store user input results
-			int t = 0;
-			while( t == 0) {
-				System.out.print("Enter the number of results you want: ");
-				int results = scan.nextInt();
-				if(checkresults(results)) {
-					output = output(query, results);
-					t = 1;
-				}
+		System.out.print("Enter text to search: "); 
+		query = scan.nextLine();
+		String output = null;
+		//create a variable to store user input results
+		int t = 0;
+		while( t == 0) {
+			System.out.print("Enter the number of results you want: ");
+			results = scan.nextInt();
+			if(checkresults(results)) {
+				output = output(query, results);
+				t = 1;
 			}
-			return output;
 		}
+		return output;
 	}
 
 	// Main method
-	public static void main(String[] args) throws MalformedURLException{
+	public static void main(String[] args) throws IOException{
 		String end = input();
-		System.out.println(videoIds);
 		System.out.println(end);
+		String end_comments = commentDetails.input();
+		System.out.println(end_comments);
 	}
 }

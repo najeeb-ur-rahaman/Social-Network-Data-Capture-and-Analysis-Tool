@@ -17,10 +17,9 @@ import youtubeApi.videoDetails;
 
 public class videoDetailsTests {
 	
-	public static String key;
-	
 	// Method to get API key from config.properties
-	public static void getAPIkey() {
+	public static String getAPIkey() {
+		String key = null;
         try (InputStream input = new FileInputStream("resources/config.properties")) {
 
             Properties prop = new Properties();
@@ -34,10 +33,11 @@ public class videoDetailsTests {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+		return key;
 	}
 	
 	@Test //Test for the input method
-	public void testiutputString() {
+	public void testinputString() {
 		try {
 			assertEquals("The File has been created. Go to 'D:/video_data.json'. To view the file",videoDetails.input());
 		} catch (MalformedURLException e) {
@@ -59,8 +59,8 @@ public class videoDetailsTests {
 	@Test //Test for the video ID method
 	public void testVideoIdsNotNull() throws MalformedURLException {
 		List<String> videoIds = new ArrayList<String>();
-		getAPIkey();
-	    URL url = new URL("https://www.googleapis.com/youtube/v3/search?key=" + key + "&q=sruthi&type=video&part=snippet&maxResults=50");
+		String key = getAPIkey();
+	    URL url = new URL("https://www.googleapis.com/youtube/v3/search?key=" + key + "&q=najeeb&type=video&part=snippet&maxResults=50");
 		try {
 			assertNotNull(videoDetails.videoids(videoIds, 10, url));
 		} catch (IOException e) {
@@ -81,12 +81,12 @@ public class videoDetailsTests {
 		videoDetails.videoids(videoIds, 10, url);
 	}
 	
-	@Test //Test for Video Data method
+	@Test //Test for output Data method
 	public void testJsonNotNull() throws MalformedURLException {
-		getAPIkey();
+		String key = getAPIkey();
 		URL url2 = new URL("https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=Hwi9dsFBuhg&key=" + key);
 		try {
-			assertNotNull(videoDetails.videoData(url2));
+			assertNotNull(videoDetails.outputData(url2));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
