@@ -18,41 +18,41 @@ public class commentDetails {
 	static String key = videoDetails.getAPIkey();
 	
 	// method to generate output file
-		public static String output(String query, int results, int comments) throws MalformedURLException{
+	public static String output(String query, int results, int comments) throws MalformedURLException{
+		
+		try  {
+			List<String> videoIds = new ArrayList<String>();
+			// URL to search videos related to search query
+			URL search_url = new URL("https://www.googleapis.com/youtube/v3/search?key=" + key + "&q=" + query + "&type=video&part=snippet&maxResults=" + results);
 			
-			try  {
-				List<String> videoIds = new ArrayList<String>();
-				// URL to search videos related to search query
-				URL search_url = new URL("https://www.googleapis.com/youtube/v3/search?key=" + key + "&q=" + query + "&type=video&part=snippet&maxResults=" + results);
-				
-				// call 'videoids' method from video Details class to collect video id's of related videos
-				List<String> videoIds1 = videoDetails.videoids(videoIds, results, search_url);
-				//System.out.println(videoIds);
-				
-				JSONObject json = new JSONObject(); // create a json object to store the video data
-				
-				// loop through the videoids list 			
-				for(int i=0; i<videoIds1.size() ;i++) {
-					String videoId = videoIds1.get(i);
-					// call video_url by inserting video id's and load data into json object
-					URL comment_url = new URL("https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=" + videoId + "&maxResults=" + comments + "&key=" + key);
-					JSONObject jsonObj = videoDetails.outputData(comment_url);		//call videodata method from videoDeatils class by passing video_url
-					json.put(videoId,jsonObj); // load video data into json object as video id and video data pair
-				}
-				
-				// Write json object into a file
-			      try (FileWriter file = new FileWriter("D:/comment_data.json")) {
-			          file.write(json.toString());
-			      }
-
-			} catch (MalformedURLException e) {
-				throw e;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			// call 'videoids' method from video Details class to collect video id's of related videos
+			List<String> videoIds1 = videoDetails.videoids(videoIds, results, search_url);
+			//System.out.println(videoIds);
+			
+			JSONObject json = new JSONObject(); // create a json object to store the video data
+			
+			// loop through the videoids list 			
+			for(int i=0; i<videoIds1.size() ;i++) {
+				String videoId = videoIds1.get(i);
+				// call video_url by inserting video id's and load data into json object
+				URL comment_url = new URL("https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=" + videoId + "&maxResults=" + comments + "&key=" + key);
+				JSONObject jsonObj = videoDetails.outputData(comment_url);		//call videodata method from videoDeatils class by passing video_url
+				json.put(videoId,jsonObj); // load video data into json object as video id and video data pair
 			}
-			return ("The File has been created. Go to 'D:/comment_data.json'. To view the file");
+			
+			// Write json object into a file
+		      try (FileWriter file = new FileWriter("D:/comment_data.json")) {
+		          file.write(json.toString());
+		      }
+
+		} catch (MalformedURLException e) {
+			throw e;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return ("The File has been created. Go to 'D:/comment_data.json'. To view the file");
+	}
 	
 	// method to check comments value
 	public static boolean checkcomments(int c) {
