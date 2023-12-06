@@ -1,4 +1,4 @@
-package Tests;
+package nurs1.Najeeb_ur_Rahaman_Shaik.Tests;
 
 import static org.junit.Assert.*;
 
@@ -13,9 +13,12 @@ import java.util.Properties;
 
 import org.junit.Test;
 
-import youtubeApi.videoDetails;
+import nurs1.Najeeb_ur_Rahaman_Shaik.youtubeApi.commentDetails;
+import nurs1.Najeeb_ur_Rahaman_Shaik.youtubeApi.videoDetails;
 
 public class videoDetailsTests {
+	
+	public static String key = getAPIkey();
 	
 	// Method to get API key from config.properties
 	public static String getAPIkey() {
@@ -59,7 +62,7 @@ public class videoDetailsTests {
 	@Test //Test for the video ID method
 	public void testVideoIdsNotNull() throws MalformedURLException {
 		List<String> videoIds = new ArrayList<String>();
-		String key = getAPIkey();
+		
 	    URL url = new URL("https://www.googleapis.com/youtube/v3/search?key=" + key + "&q=najeeb&type=video&part=snippet&maxResults=50");
 		try {
 			assertNotNull(videoDetails.videoids(videoIds, 10, url));
@@ -100,6 +103,26 @@ public class videoDetailsTests {
 		videoDetails.videoids(videoIds, 10, url);
 	}
 	
+	@Test //Test for the output method
+	public void testOutputStringcomments() throws IOException {
+		try {
+			assertEquals("The File has been created. Go to 'D:/comment_data.json'. To view the file",commentDetails.output("najeeb", 4, 20));
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test //Test for the input method
+	public void testinputStringcomments() throws IOException {
+		try {
+			assertEquals("The File has been created. Go to 'D:/comment_data.json'. To view the file",commentDetails.input());
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	//Tests to check results value
 	@Test 
 	public void testcheckresultsequalto0(){
@@ -119,5 +142,32 @@ public class videoDetailsTests {
 	@Test 
 	public void testcheckresults(){
 		assertEquals(true, videoDetails.checkresults(6));
+	}
+	
+	
+	// Tests to check comments
+	@Test 
+	public void testcheckcommentsequalto0(){
+		assertEquals(false, commentDetails.checkcomments(0));
+	}
+	
+	@Test 
+	public void testcheckcommentslessthan0(){
+		assertEquals(false, commentDetails.checkcomments(-1));
+	}
+	
+	@Test 
+	public void testcheckcommentsgreaterthan100(){
+		assertEquals(false, commentDetails.checkcomments(120));
+	}
+	
+	@Test 
+	public void testcheckcomments(){
+		assertEquals(true, commentDetails.checkcomments(6));
+	}
+	
+	@Test 
+	public void testcheckcomments2(){
+		assertEquals(true, commentDetails.checkcomments(60));
 	}
 }
