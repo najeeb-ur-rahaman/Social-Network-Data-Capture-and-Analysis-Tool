@@ -24,7 +24,8 @@ public class CommentsSentimentAnalysis {
 	static int negative=0;
 	static int positive=0;
 	static int veryPositive=0;
-	static int neutral=0;
+	static int neutral=0;	
+	
 	
 	public static void main(String[] args) throws SQLException {
 		BasicConfigurator.configure();
@@ -47,13 +48,7 @@ public class CommentsSentimentAnalysis {
 		
 		//Finding out which video has the highest views
 		highestViews = videoViewsDouble.get(0);
-		 for(int i=0; i<videoTitles.size();i++) {			 
-			 if(highestViews < videoViewsDouble.get(i)) {
-				 highestViews = videoViewsDouble.get(i);
-				 highestViewsComments = videoComments.get(i);
-				 highestVideoTitle = videoTitles.get(i);
-			 }		
-		} 		
+		highestViewsVideo();		 		
 		 System.out.println(highestVideoTitle+" "+highestViews+" "+highestViewsComments);
 
 		//Fetching the pipeline for NLP functions
@@ -85,7 +80,28 @@ public class CommentsSentimentAnalysis {
 				neutral++;
 			}
 		}
+		
 		System.out.println("Negative: "+negative + "Positive:"+positive + "Very positive: "+veryPositive+"Neutral: "+neutral);
+		
+	}
+	
+	//Function to find out which video has the highest views	
+	public static String highestViewsVideo() {
+		for(int i=0; i<videoTitles.size();i++) {			 
+			 if(highestViews < videoViewsDouble.get(i)) {
+				 highestViews = videoViewsDouble.get(i);
+				 highestViewsComments = videoComments.get(i);
+				 highestVideoTitle = videoTitles.get(i);
+			 }		
+		} 
+		return "Highest views video: " +highestVideoTitle ;
+	}
+	
+	public static String analyseComments() {
+		
+		
+		
+		return "";
 	}
 
 }

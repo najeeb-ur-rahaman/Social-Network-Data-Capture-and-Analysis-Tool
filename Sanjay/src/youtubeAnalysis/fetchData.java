@@ -10,7 +10,7 @@ public class fetchData {
 	static List<Double> videoValueInt=new ArrayList<>();
 	
 	
-	public static void fetchDataMethod(ResultSet results) throws SQLException
+	public static List <String> fetchDataMethod(ResultSet results) throws SQLException
 	{		
 		while(results.next())
 		{				
@@ -19,7 +19,8 @@ public class fetchData {
 		}
 		for(String myDouble : videoValue) {
 			videoValueInt.add(Double.valueOf(myDouble));
-		}	
+		}
+		return videoTitles;
 	}
 
 }

@@ -1,0 +1,5 @@
+#analyseComments
+	lines:
+		zero.	[error]
+		one.
+		many.

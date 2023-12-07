@@ -1,10 +1,15 @@
 package youtubeAnalysis;
 
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import org.jfree.chart.*;
 import org.jfree.chart.plot.CategoryPlot;
@@ -18,20 +23,23 @@ public class CommentsAnalysis extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	public static double highestComments = 0.0;
+	public static String highestCommentsVideo= "";
 
 	/**
 	 * Launch the application.
+	 * @throws ClassNotFoundException 
 	 * @throws SQLException 
 	 */
-	public static void main(String[] args) throws SQLException {
-		try {
-			
-			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-			
-		} 
-		catch (ClassNotFoundException e) {			
-			e.printStackTrace();
-		}		
+	public static void main(String[] args) throws  SQLException{
+		
+			try {
+				Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			} catch (ClassNotFoundException e) {
+				
+				e.printStackTrace();
+			}		
+				
 		
 		//Connecting to database
 		ResultSet results = databaseConnection.databaseConnectionMethod("comments");
@@ -55,12 +63,48 @@ public class CommentsAnalysis extends JFrame {
 	 * Create the frame.
 	 */
 	public CommentsAnalysis() {
+		findHighestComments(fetchData.videoValueInt, fetchData.videoTitles);
+
+		//Creating dataset to feed data to the bar chart
+		DefaultCategoryDataset dataSet=new DefaultCategoryDataset();
+		
+		//Adding values to dataSet
+		for(int i=0; i<fetchData.videoTitles.size();i++) {			
+		dataSet.addValue(fetchData.videoValueInt.get(i),fetchData.videoValue.get(i),fetchData.videoTitles.get(i));		
+		}
+		
+		//Calling the function
+		analyseCommentsBarGraph(dataSet);
+		
+	}
+	
+public static String findHighestComments(List <Double> videoValueInt, List <String> videoTitles) {
+		
+		highestComments = videoValueInt.get(0);		
+		for(int i=0; i<fetchData.videoTitles.size();i++) {
+			if(highestComments < videoValueInt.get(i)) {
+				highestComments = videoValueInt.get(i);	
+				highestCommentsVideo=videoTitles.get(i);
+			}
+		}
+		if(videoValueInt.isEmpty() && videoTitles.isEmpty()==false) {
+		return highestCommentsVideo;	
+		}
+		else {
+			return "Empty";
+		}
+}
+	
+	//Bar graph for analyzing method
+	public String analyseCommentsBarGraph(DefaultCategoryDataset dataSet) {
+		
 		setResizable(false);
 		setTitle("Comments Analysis");
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 800, 500);
+		setBounds(100, 100, 800, 546);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(255, 255, 255));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -70,13 +114,6 @@ public class CommentsAnalysis extends JFrame {
 		panel.setBackground(new Color(255, 255, 255));
 		panel.setBounds(10, 10, 766, 443);
 		contentPane.add(panel);
-		
-		//Creating dataset to feed data to the bar chart
-		DefaultCategoryDataset dataSet=new DefaultCategoryDataset();
-		
-		for(int i=0; i<fetchData.videoTitles.size();i++) {			
-		dataSet.addValue(fetchData.videoValueInt.get(i),fetchData.videoValue.get(i),fetchData.videoTitles.get(i));		
-		}				
 		
 		//Creating the bar graph		
 		JFreeChart barChart1 = ChartFactory.createBarChart3D("Bar Graph of number of comments", "Videos", "Comments", dataSet,PlotOrientation.VERTICAL, true, true, false);
@@ -93,7 +130,21 @@ public class CommentsAnalysis extends JFrame {
 		ChartPanel chartPanel1 = new ChartPanel(barChart1, true);		
 		chartPanel1.setVisible(true);
 		panel.add(chartPanel1,BorderLayout.CENTER);
-		chartPanel1.setLayout(new BorderLayout(0, 0));		
+		chartPanel1.setLayout(new BorderLayout(0, 0));	
 		
+		//Label to display result
+		JLabel lblNewLabel = new JLabel("",SwingConstants.CENTER);
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblNewLabel.setBounds(10, 454, 766, 45);
+		contentPane.add(lblNewLabel);
+				
+		lblNewLabel.setText("The Video with highest comments: "+ highestCommentsVideo);
+		if(dataSet!=null) {
+		return "Analysed Successfully!";
+		}
+		else
+		{
+			return "Empty dataset";
+		}		
 	}
 }

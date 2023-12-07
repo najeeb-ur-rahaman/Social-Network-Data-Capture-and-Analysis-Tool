@@ -1,0 +1,12 @@
+
+Test Case 1  		<error>
+   videoValueInt :  zero
+
+
+Test Case 2  		(Key = 2.)
+   videoValueInt :  one
+
+
+Test Case 3  		(Key = 3.)
+   videoValueInt :  many
+

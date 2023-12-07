@@ -1,0 +1,5 @@
+#sentimentAnalysisGraph
+	dataSet:
+		zero.	[error]
+		one.
+		many.

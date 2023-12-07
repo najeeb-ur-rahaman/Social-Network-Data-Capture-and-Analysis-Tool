@@ -1,0 +1,12 @@
+
+Test Case 1  		<error>
+   videoViewsDouble :  zero
+
+
+Test Case 2  		(Key = 2.)
+   videoViewsDouble :  one
+
+
+Test Case 3  		(Key = 3.)
+   videoViewsDouble :  many
+

@@ -15,7 +15,6 @@ import javax.swing.border.EmptyBorder;
 import org.apache.log4j.BasicConfigurator;
 import org.jfree.chart.*;
 import org.jfree.chart.plot.PiePlot;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
 import edu.stanford.nlp.pipeline.CoreDocument;
@@ -60,17 +59,9 @@ public class CommentSentimentAnalysis extends JFrame {
 					videoViewsDouble.add(Double.valueOf(myDouble));
 				}	
 				
-				//Finding out which video has the highest views
-				highestViews = videoViewsDouble.get(0);
-				 for(int i=0; i<videoTitles.size();i++) {			 
-					 if(highestViews < videoViewsDouble.get(i)) {
-						 highestViews = videoViewsDouble.get(i);
-						 highestViewsComments = videoComments.get(i);
-						 highestVideoTitle = videoTitles.get(i);
-					 }		
-				} 		
-				 System.out.println(highestVideoTitle+" "+highestViews+" "+highestViewsComments);
-
+				//Finding out which video has the highest views				
+				highestViewsVideo(videoViewsDouble);		 		
+				
 				//Fetching the pipeline for NLP functions
 				StanfordCoreNLP coreNLP = Pipeline.fetchPipeline();
 				
@@ -80,25 +71,9 @@ public class CommentSentimentAnalysis extends JFrame {
 				
 				List <CoreSentence> lines = cd.sentences();
 				
-				for(CoreSentence line : lines) {					
-					
-					if(line.sentiment().contentEquals("Negative")==true) {
-						negative++;
-					}
-					
-					else if(line.sentiment().contentEquals("Positive")==true) {
-						positive++;
-					}
-					
-					else if(line.sentiment().contentEquals("Very positive")==true) {
-						veryPositive++;
-					}
-					
-					else if(line.sentiment().contentEquals("neutral")==true) {
-						neutral++;
-					}
-				}				
-
+				analyseComments(lines);
+				
+				
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -115,12 +90,19 @@ public class CommentSentimentAnalysis extends JFrame {
 	 * Create the frame.
 	 */
 	public CommentSentimentAnalysis() {
+		//Creating a dataset to store and feed data to the bar chart
+		DefaultPieDataset dataSet=new DefaultPieDataset();
+		sentimentAnalysisGraph(dataSet);
+	}
+	
+	public String sentimentAnalysisGraph(DefaultPieDataset dataSet) {
 		setResizable(false);
 		setTitle("Sentiment Analysis");
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 500);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(255, 255, 255));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -129,10 +111,7 @@ public class CommentSentimentAnalysis extends JFrame {
 		panel.setBackground(new Color(255, 255, 255));
 		panel.setBounds(10, 10, 766, 443);
 		contentPane.add(panel);
-		
-		//Creating dataset to feed data to the bar chart
-		DefaultPieDataset dataSet=new DefaultPieDataset();
-		
+	
 		if(negative!=0) {
 		dataSet.setValue("Negative", negative);
 		}
@@ -156,7 +135,66 @@ public class CommentSentimentAnalysis extends JFrame {
 		ChartPanel chartPanel1 = new ChartPanel(piechart, true);		
 		chartPanel1.setVisible(true);
 		panel.add(chartPanel1,BorderLayout.CENTER);
-		chartPanel1.setLayout(new BorderLayout(0, 0));	
+		chartPanel1.setLayout(new BorderLayout(0, 0));
+		
+		if(dataSet!=null) {
+			return "Analysed Successfully!";
+			}
+			else
+			{
+				return "Empty dataset";
+			}
 	}
+	
+	//Method to find out which video has the highest views	
+		public static double highestViewsVideo(List <Double> videoViewsDouble) {
+			for(int i=0; i<videoTitles.size();i++) {
+				highestViews = videoViewsDouble.get(0);
+				 if(highestViews < videoViewsDouble.get(i)) {
+					 highestViews = videoViewsDouble.get(i);
+					 highestViewsComments = videoComments.get(i);
+					 highestVideoTitle = videoTitles.get(i);
+				 }		
+			} 
+			if(videoViewsDouble!=null) {
+			return highestViews ;
+			}
+			else {
+				return 0.0;
+			}
+		}
+		
+		//Method for analyzing comments
+		public static String analyseComments(List <CoreSentence> lines) {
+			String sentiments = "";
+			for(CoreSentence line : lines) {					
+				
+				if(line.sentiment().contentEquals("Negative")==true) {
+					negative++;
+				}
+				
+				else if(line.sentiment().contentEquals("Positive")==true) {
+					positive++;
+				}
+				
+				else if(line.sentiment().contentEquals("Very positive")==true) {
+					veryPositive++;
+				}
+				
+				else if(line.sentiment().contentEquals("neutral")==true) {
+					neutral++;
+				}
+				sentiments = line.sentiment();
+				//return line.sentiment();
+			}			
+			if(sentiments.isEmpty()==false)
+			{
+				return sentiments;
+			}
+			else {
+				return "Empty";
+			}
+		}
+		
 
 }
