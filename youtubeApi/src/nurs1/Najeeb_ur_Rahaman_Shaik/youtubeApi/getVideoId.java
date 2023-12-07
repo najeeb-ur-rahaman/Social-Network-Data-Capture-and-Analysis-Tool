@@ -46,7 +46,8 @@ public class getVideoId {
 			}
         }
         else {
-        	System.out.println("Connection Error"); // print when connection fails
+        	videoIds.add("Connection Error");
+        	return  videoIds;// print when connection fails
         }
 		return videoIds; // returns video id's
 	}

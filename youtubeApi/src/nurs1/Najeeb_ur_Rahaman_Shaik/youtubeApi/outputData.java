@@ -34,8 +34,9 @@ public class outputData {
 			return jsonObj; //json object of video data
         }
         else {
-        	JSONObject jsonObj = new JSONObject();
-        	return jsonObj;
+        	JSONObject item = new JSONObject();
+        	item.put("error", "Something went wrong");
+        	return item;
         }
 	}
 
