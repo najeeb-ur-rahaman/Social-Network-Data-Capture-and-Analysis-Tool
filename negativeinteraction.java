@@ -1,87 +1,88 @@
-package sprint2;
+package Final;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.ui.ApplicationFrame;
+import org.jfree.ui.RefineryUtilities;
 
-import javax.swing.*;
-import java.awt.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+public class negativeinteraction extends ApplicationFrame {
 
-public class negativeinteraction extends JFrame {
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/testingtestingtesting";
+    private static final String JDBC_USER = "George";
+    private static final String JDBC_PASSWORD = "George02!";
 
     public negativeinteraction(String title) {
         super(title);
-        XYSeries shortSeries = readDataFromJSON("C:\\Users\\gwils\\OneDrive\\Desktop\\filter data 2.json", 5);
-        XYSeries longSeries = readDataFromJSON("C:\\Users\\gwils\\OneDrive\\Desktop\\filter data 2.json", Double.MAX_VALUE);
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(shortSeries);
-        dataset.addSeries(longSeries);
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(
-                "Negative Interaction Trend for Short and Long Posts",
-                "Date",
-                "Number of Dislikes",
-                dataset,
-                false,
-                true,
-                false
-        );
-        XYPlot plot = (XYPlot) chart.getPlot();
-        DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
-        dateAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd"));
+        CategoryDataset dataset = createDataset();
+        JFreeChart chart = createChart(dataset);
         ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(800, 600));
+        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
         setContentPane(chartPanel);
     }
 
-    private XYSeries readDataFromJSON(String filePath, double durationThreshold) {
-        XYSeries series = new XYSeries(durationThreshold == Double.MAX_VALUE ? "Long Posts" : "Short Posts");
-        JSONParser parser = new JSONParser();
-        try {
-            Object obj = parser.parse(new FileReader(filePath));
-            JSONObject jsonObject = (JSONObject) obj;
-            JSONArray filters = (JSONArray) jsonObject.get("filters");
-            for (Object filterObj : filters) {
-                JSONObject filter = (JSONObject) filterObj;
-                String dateString = (String) filter.get("publishedAt");
-                Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
-                long numberOfDislikes = (Long) filter.get("dislikeCount");
-                String durationString = (String) filter.get("duration");
-                double duration = getDurationInSeconds(durationString);
-                if ((durationThreshold == Double.MAX_VALUE && duration > durationThreshold) ||
-                        (durationThreshold != Double.MAX_VALUE && duration <= durationThreshold)) {
-                    series.add(date.getTime(), numberOfDislikes);
+    private CategoryDataset createDataset() {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
+            String query = "SELECT DATE_FORMAT(timestamp_column, '%H:%i') AS time_interval, " +
+                    "SUM(like_count) AS total_likes, " +
+                    "SUM(dislike_count) AS total_dislikes, " +
+                    "SUM(view_duration) AS total_view_duration " +
+                    "FROM video_data " +
+                    "GROUP BY time_interval";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        String timeInterval = resultSet.getString("time_interval");
+                        int totalLikes = resultSet.getInt("total_likes");
+                        int totalDislikes = resultSet.getInt("total_dislikes");
+                        int totalViewDuration = resultSet.getInt("total_view_duration");
+
+                        // Calculate the dislike ratio
+                        double dislikeRatio = (totalLikes + totalDislikes != 0) ?
+                                (double) totalDislikes / (totalLikes + totalDislikes) : Double.POSITIVE_INFINITY;
+
+                        dataset.addValue(dislikeRatio, "Dislike Ratio", timeInterval);
+                    }
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        return series;
+
+        return dataset;
     }
-    private double getDurationInSeconds(String durationString) {
-        String[] tokens = durationString.split("PT");
-        int minutes = tokens[1].contains("M") ? Integer.parseInt(tokens[1].split("M")[0]) : 0;
-        int seconds = tokens[1].contains("S") ? Integer.parseInt(tokens[1].split("S")[0]) : 0;
-        return minutes * 60 + seconds;
+
+    private JFreeChart createChart(CategoryDataset dataset) {
+        JFreeChart chart = ChartFactory.createLineChart(
+                "Dislike Ratio Over Time Intervals",
+                "Time Intervals",
+                "Dislike Ratio",
+                dataset
+        );
+
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+        CategoryAxis domainAxis = plot.getDomainAxis();
+        domainAxis.setCategoryMargin(0.25);
+
+        return chart;
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            negativeinteraction example = new negativeinteraction("Negative Interaction Trend for Short and Long Posts");
-            example.setSize(800, 600);
-            example.setLocationRelativeTo(null);
-            example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            example.setVisible(true);
-        });
+        negativeinteraction chart = new negativeinteraction("Dislike Ratio Over Time Intervals");
+        chart.pack();
+        RefineryUtilities.centerFrameOnScreen(chart);
+        chart.setVisible(true);
     }
 }
