@@ -1,67 +1,91 @@
+package Final;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.ui.ApplicationFrame;
+import org.jfree.ui.RefineryUtilities;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class PopularPostsChart {
-    public static void createAndShowGUI() {
-        JFrame frame = new JFrame("Popular Posts Chart");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+public class visualising_posts extends ApplicationFrame {
 
-        // Create chart panel
-        ChartPanel chartPanel = new ChartPanel(createChart(createDataset()));
-        chartPanel.setPreferredSize(new Dimension(800, 600));
-        frame.getContentPane().add(chartPanel);
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/testingtestingtesting";
+    private static final String JDBC_USER = "George";
+    private static final String JDBC_PASSWORD = "George02!";
 
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+    public visualising_posts(String title) {
+        super(title);
+        CategoryDataset dataset = createDataset();
+        JFreeChart chart = createChart(dataset);
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
+        setContentPane(chartPanel);
     }
-    private static JFreeChart createChart(CategoryDataset dataset) {
-        return ChartFactory.createBarChart(
-                "Most Popular Posts by Likes",
-                "Post ID",
-                "Likes",
-                dataset
-        );
-    }
-    private static CategoryDataset createDataset() {
+
+    private CategoryDataset createDataset() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        try (Scanner scanner = new Scanner(new File("\"C:\\Users\\gwils\\OneDrive\\Desktop\\video_data.json\""))) {
-            StringBuilder jsonContent = new StringBuilder();
+        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
+            String query = "SELECT DATE_FORMAT(timestamp_column, '%H:%i') AS time_interval, " +
+                    "SUM(like_count) AS total_likes, " +
+                    "SUM(view_duration) AS total_view_duration " +
+                    "FROM video_data " +
+                    "GROUP BY time_interval";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        String timeInterval = resultSet.getString("time_interval");
+                        int totalLikes = resultSet.getInt("total_likes");
+                        int totalViewDuration = resultSet.getInt("total_view_duration");
 
-            // Read the entire JSON file into a StringBuilder
-            while (scanner.hasNextLine()) {
-                jsonContent.append(scanner.nextLine());
+                        // Calculate the view time to likes ratio
+                        double viewToLikesRatio = (totalLikes != 0) ? (double) totalViewDuration / totalLikes : Double.POSITIVE_INFINITY;
+
+                        dataset.addValue(viewToLikesRatio, "View Time to Likes Ratio", timeInterval);
+                    }
+                }
             }
-
-            // Assuming the JSON structure includes post data with "postId" and "likes" properties
-            String regex = "\"postId\"\\s*:\\s*\"(.*?)\".*?\"likes\"\\s*:\\s*(\\d+)";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(jsonContent);
-
-            while (matcher.find()) {
-                String postId = matcher.group(1);
-                int likes = Integer.parseInt(matcher.group(2));
-
-                // Add data to the dataset
-                dataset.addValue(likes, "Likes", postId);
-            }
-        } catch (FileNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return dataset;
     }
+
+    private JFreeChart createChart(CategoryDataset dataset) {
+        JFreeChart chart = ChartFactory.createLineChart(
+                "View Time to Likes Ratio Over Time Intervals",
+                "Time Intervals",
+                "View Time to Likes Ratio",
+                dataset
+        );
+
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+        CategoryAxis domainAxis = plot.getDomainAxis();
+        domainAxis.setCategoryMargin(0.25);
+
+        return chart;
+    }
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(PopularPostsChart::createAndShowGUI);
+        visualising_posts chart = new visualising_posts("View Time to Likes Ratio Over Time Intervals");
+        chart.pack();
+        RefineryUtilities.centerFrameOnScreen(chart);
+        chart.setVisible(true);
     }
 }
