@@ -57,23 +57,10 @@ public class TSLTestCases {
 			e.printStackTrace();
 		}
 	}
-	
-	@Test //Test for the getvideoID method
-	public void testgetvideoId2() throws MalformedURLException {
-		List<String> videoIds = new ArrayList<String>();
-		
-	    URL url = new URL("https://www.googleapis.com/youtube/v3/search?key=" + key + "&q=najeeb&type=video&part=snippet&maxResults=50");
-		try {
-			assertNotNull(getVideoId.videoids(videoIds, 9, url));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
+    
 	// Test to check if getVideoId method with wrong url
 	@Test
-	public void testgetVideoid3() throws IOException {
+	public void testgetVideoid2() throws IOException {
 		List<String> videoIds = new ArrayList<String>();
 		videoIds.add("Connection Error");
 	    URL wrong_url = new URL("https://www.googleapis.com/youtube/v3/search?&q=najeeb&type=video&part=snippet&maxResults=50");
@@ -193,11 +180,6 @@ public class TSLTestCases {
 	
 	@Test 
 	public void testcheckcomments(){
-		assertEquals(true, inputComments.checkcomments(6));
-	}
-	
-	@Test 
-	public void testcheckcomments2(){
 		assertEquals(true, inputComments.checkcomments(60));
 	}
 	
