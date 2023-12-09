@@ -1,75 +1,96 @@
-package sprint2;
+package Final;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+import javax.swing.*;
+import java.awt.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class MostPopular {
 
-    public static void main(String[] args) {
-        // Provide the path to your JSON file on the desktop
-        String filePath = "C:\\Users\\gwils\\OneDrive\\Desktop\\filter data 2.json";
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/testingtestingtesting";
+    private static final String JDBC_USER = "George";
+    private static final String JDBC_PASSWORD = "George02!";
 
-        try {
-            calculateAndPrintRatioForEachVideo(filePath);
-        } catch (IOException e) {
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> createAndShowGui());
+    }
+
+    private static void createAndShowGui() {
+        JFrame frame = new JFrame("Like-to-View Ratio Graph");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        CategoryDataset dataset = createDataset();
+        JFreeChart chart = createChart(dataset);
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new Dimension(800, 600));
+        frame.setContentPane(chartPanel);
+
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    private static CategoryDataset createDataset() {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
+            String query = "SELECT title, like_count, view_count FROM video_data";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        String title = resultSet.getString("title");
+                        int likeCount = resultSet.getInt("like_count");
+                        int viewCount = resultSet.getInt("view_count");
+                        double likeToViewRatio = (viewCount != 0) ? (double) likeCount / viewCount : Double.POSITIVE_INFINITY;
+
+                        dataset.addValue(likeToViewRatio, "Like to View Ratio", title);
+                    }
+                }
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return dataset;
     }
 
-    private static void calculateAndPrintRatioForEachVideo(String filePath) throws IOException {
-        // Read JSON file into a string
-        String jsonString = readJsonFile(filePath);
+    private static JFreeChart createChart(CategoryDataset dataset) {
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Like to View Ratio Comparison",
+                "Videos",
+                "Ratio",
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false
+        );
 
-        // Remove leading and trailing whitespaces and newlines for consistent parsing
-        jsonString = jsonString.trim();
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+        CategoryAxis domainAxis = plot.getDomainAxis();
+        domainAxis.setCategoryMargin(0.25);
 
-        // Extract the "filters" array
-        int filtersIndex = jsonString.indexOf("\"filters\": [");
-        int startIndex = jsonString.indexOf("{", filtersIndex);
-        int endIndex = jsonString.lastIndexOf("}");
-        String filtersArrayString = jsonString.substring(startIndex, endIndex + 1);
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
-        // Split the array into individual video objects
-        String[] videoObjects = filtersArrayString.split("\\},\\s*\\{");
+        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        renderer.setItemMargin(0.05);
 
-        // Iterate through each video in the array
-        for (int i = 0; i < videoObjects.length; i++) {
-            String videoObjectString = videoObjects[i];
-
-            // Extract likes and comments counts from the current video
-            int likes = extractFieldValue(videoObjectString, "likeCount");
-            int comments = extractFieldValue(videoObjectString, "commentCount");
-
-            // Get the video title
-            String title = extractFieldValueString(videoObjectString, "title");
-
-            // Calculate the ratio
-            double ratio = (comments != 0) ? (double) likes / comments : Double.POSITIVE_INFINITY;
-
-            // Print the result with the video title and formatted ratio
-            System.out.printf("Video: \"%s\" - Likes to Comment Ratio: %.2f%n", title, ratio);
-        }
-    }
-
-    private static String readJsonFile(String filePath) throws IOException {
-        Path path = Paths.get(filePath);
-        return Files.readString(path);
-    }
-
-    private static int extractFieldValue(String videoObjectString, String fieldName) {
-        int fieldIndex = videoObjectString.indexOf("\"" + fieldName + "\":");
-        int valueIndex = videoObjectString.indexOf("\"", fieldIndex + fieldName.length() + 3);
-        int endIndex = videoObjectString.indexOf("\"", valueIndex + 1);
-        String valueString = videoObjectString.substring(valueIndex + 1, endIndex);
-        return Integer.parseInt(valueString);
-    }
-
-    private static String extractFieldValueString(String videoObjectString, String fieldName) {
-        int fieldIndex = videoObjectString.indexOf("\"" + fieldName + "\":");
-        int valueIndex = videoObjectString.indexOf("\"", fieldIndex + fieldName.length() + 3);
-        int endIndex = videoObjectString.indexOf("\"", valueIndex + 1);
-        return videoObjectString.substring(valueIndex + 1, endIndex);
+        return chart;
     }
 }
