@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Graphtoseeiflikesordislikesovertime {
+public class MostPopular {
 
     public static void main(String[] args) {
         // Provide the path to your JSON file on the desktop
