@@ -1,0 +1,5 @@
+#databaseConnectionMethod
+	tableName:
+		zero.	[error]
+		one.
+		wrong.	[error]

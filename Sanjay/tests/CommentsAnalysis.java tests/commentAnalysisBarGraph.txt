@@ -1,5 +1,4 @@
 #analyseCommentsBarGraph
 	dataSet:
-		zero.	[error]
 		one.	
 		many.

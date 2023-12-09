@@ -83,8 +83,12 @@ public class durationAnalysis extends JFrame {
 	
 	public static Double findLongestVideo(List <Double> videoValueInt) {
 		
+		if (videoValueInt == null || videoValueInt.isEmpty()) {
+            return 0.0;
+        }
+		
 		highestDuration = videoValueInt.get(0);		
-		for(int i=0; i<fetchData.videoTitles.size();i++) {
+		for(int i=1; i<videoValueInt.size();i++) {
 			if(highestDuration < videoValueInt.get(i)) {
 				highestDuration = videoValueInt.get(i);	
 			}
@@ -136,13 +140,13 @@ public class durationAnalysis extends JFrame {
 		
 		lblNewLabel.setText("Highest Duration is: "+ highestDuration);
 		
-		if(dataSet!=null) {
-		return "Analysed Succesfully";
-		}
-		else
-		{
-			return "Empty dataset";
-		}
+		if(dataSet.getColumnCount()!=0) {
+			return "Graph generated successfully!";
+			}
+			else
+			{
+				return "Empty dataset";
+			}	
 		
 	}	
 }

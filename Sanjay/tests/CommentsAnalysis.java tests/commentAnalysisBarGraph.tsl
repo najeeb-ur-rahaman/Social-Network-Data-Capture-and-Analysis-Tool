@@ -1,12 +1,8 @@
 
-Test Case 1  		<error>
-   dataSet :  zero
-
-
-Test Case 2  		(Key = 2.)
+Test Case 1  		(Key = 1.)
    dataSet :  one
 
 
-Test Case 3  		(Key = 3.)
+Test Case 2  		(Key = 2.)
    dataSet :  many
 

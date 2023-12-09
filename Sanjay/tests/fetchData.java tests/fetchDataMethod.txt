@@ -1,0 +1,5 @@
+#fetchDataMethod
+	results:
+		zero.	[error]
+		one.
+		

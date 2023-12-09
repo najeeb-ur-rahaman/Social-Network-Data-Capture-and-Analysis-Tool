@@ -26,17 +26,17 @@ public class CommentSentimentAnalysis extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	static List<String> videoTitles=new ArrayList<>();
-	static List<String> videoComments=new ArrayList<>();
-	static List<String> videoViews=new ArrayList<>();
-	static List<Double> videoViewsDouble=new ArrayList<>();
+	public static List<String> videoTitles=new ArrayList<>();
+	public static List<String> videoComments=new ArrayList<>();
+	public static List<String> videoViews=new ArrayList<>();
+	public static List<Double> videoViewsDouble=new ArrayList<>();
 	static Double highestViews = 0.0;
 	static String highestViewsComments="";
 	static String highestVideoTitle="";	
-	static int negative=0;
-	static int positive=0;
-	static int veryPositive=0;
-	static int neutral=0;
+	public static int negative=0;
+	public static int positive=0;
+	public static int veryPositive=0;
+	public static int neutral=0;
 
 	/**
 	 * Launch the application.
@@ -48,16 +48,7 @@ public class CommentSentimentAnalysis extends JFrame {
 				ResultSet results = databaseConnection.databaseConnectionMethod("sentimentAnalysis");			
 				
 				//Storing the resultset in appropriate variables to perform operations on them
-				while(results.next())
-				{
-					videoTitles.add(results.getString(1));
-					videoComments.add(results.getString(2));
-					videoViews.add(results.getString(3));
-				}
-				
-				for(String myDouble : videoViews) {
-					videoViewsDouble.add(Double.valueOf(myDouble));
-				}	
+				storeResultSet(results);
 				
 				//Finding out which video has the highest views				
 				highestViewsVideo(videoViewsDouble);		 		
@@ -93,6 +84,26 @@ public class CommentSentimentAnalysis extends JFrame {
 		//Creating a dataset to store and feed data to the bar chart
 		DefaultPieDataset dataSet=new DefaultPieDataset();
 		sentimentAnalysisGraph(dataSet);
+	}
+	
+	public static String storeResultSet(ResultSet results) throws SQLException {
+		
+		while(results.next())
+		{
+			videoTitles.add(results.getString(1));
+			videoComments.add(results.getString(2));
+			videoViews.add(results.getString(3));
+		}
+		
+		for(String myDouble : videoViews) {
+		      videoViewsDouble.add(Double.valueOf(myDouble));    
+		}
+		if(videoTitles.isEmpty()==false) {
+			return "Stored Successfully";
+			}
+			else {
+				return null;
+			}
 	}
 	
 	public String sentimentAnalysisGraph(DefaultPieDataset dataSet) {
@@ -137,8 +148,8 @@ public class CommentSentimentAnalysis extends JFrame {
 		panel.add(chartPanel1,BorderLayout.CENTER);
 		chartPanel1.setLayout(new BorderLayout(0, 0));
 		
-		if(dataSet!=null) {
-			return "Analysed Successfully!";
+		if(dataSet.getItemCount()!=0) {
+			return "Piechart generated successfully!";
 			}
 			else
 			{
@@ -148,15 +159,17 @@ public class CommentSentimentAnalysis extends JFrame {
 	
 	//Method to find out which video has the highest views	
 		public static double highestViewsVideo(List <Double> videoViewsDouble) {
-			for(int i=0; i<videoTitles.size();i++) {
-				highestViews = videoViewsDouble.get(0);
+		
+			highestViews = videoViewsDouble.get(0);
+			for(int i=1; i<videoViewsDouble.size();i++) {
 				 if(highestViews < videoViewsDouble.get(i)) {
 					 highestViews = videoViewsDouble.get(i);
 					 highestViewsComments = videoComments.get(i);
 					 highestVideoTitle = videoTitles.get(i);
 				 }		
 			} 
-			if(videoViewsDouble!=null) {
+			
+			if(videoViewsDouble.isEmpty()==false) {
 			return highestViews ;
 			}
 			else {
@@ -195,6 +208,4 @@ public class CommentSentimentAnalysis extends JFrame {
 				return "Empty";
 			}
 		}
-		
-
 }

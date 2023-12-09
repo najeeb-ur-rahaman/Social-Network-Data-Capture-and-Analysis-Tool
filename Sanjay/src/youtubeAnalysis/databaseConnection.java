@@ -15,8 +15,7 @@ public class databaseConnection {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			
 		} 
-		catch (ClassNotFoundException e) {			
-			e.printStackTrace();
+		catch (ClassNotFoundException e) {		
 		}
 		//Connecting to database
 		String databaseUrl="jdbc:sqlserver://LAPTOP-6IA90KVK;databaseName=youtubeApi;"
@@ -26,7 +25,12 @@ public class databaseConnection {
 		String myquery="SELECT * FROM "+ tableName +"";
 		ResultSet results=statement.executeQuery(myquery);
 		
+		if(results!=null) {
 		return results;
+		}
+		else {
+			return null;
+		}
 	}
 	
 }

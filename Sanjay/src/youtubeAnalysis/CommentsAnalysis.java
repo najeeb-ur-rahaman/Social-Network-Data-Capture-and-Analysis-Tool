@@ -38,7 +38,7 @@ public class CommentsAnalysis extends JFrame {
 			} catch (ClassNotFoundException e) {
 				
 				e.printStackTrace();
-			}		
+			}	
 				
 		
 		//Connecting to database
@@ -79,20 +79,18 @@ public class CommentsAnalysis extends JFrame {
 	}
 	
 public static String findHighestComments(List <Double> videoValueInt, List <String> videoTitles) {
-		
-		highestComments = videoValueInt.get(0);		
-		for(int i=0; i<fetchData.videoTitles.size();i++) {
+		if (videoValueInt.isEmpty() || videoTitles.isEmpty()) {
+        return null;
+		}
+		highestComments = videoValueInt.get(0);
+		highestCommentsVideo = videoTitles.get(0);
+				for(int i=0; i<videoTitles.size();i++) {
 			if(highestComments < videoValueInt.get(i)) {
 				highestComments = videoValueInt.get(i);	
 				highestCommentsVideo=videoTitles.get(i);
 			}
-		}
-		if(videoValueInt.isEmpty() && videoTitles.isEmpty()==false) {
-		return highestCommentsVideo;	
-		}
-		else {
-			return "Empty";
-		}
+		}		
+		return highestCommentsVideo;		
 }
 	
 	//Bar graph for analyzing method
@@ -103,7 +101,7 @@ public static String findHighestComments(List <Double> videoValueInt, List <Stri
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 546);
-		contentPane = new JPanel();
+		JPanel contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 255, 255));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -139,12 +137,12 @@ public static String findHighestComments(List <Double> videoValueInt, List <Stri
 		contentPane.add(lblNewLabel);
 				
 		lblNewLabel.setText("The Video with highest comments: "+ highestCommentsVideo);
-		if(dataSet!=null) {
-		return "Analysed Successfully!";
-		}
-		else
-		{
-			return "Empty dataset";
-		}		
+		if(dataSet.getColumnCount()!=0) {
+			return "Graph generated successfully!";
+			}
+			else
+			{
+				return "Empty dataset";
+			}		
 	}
 }

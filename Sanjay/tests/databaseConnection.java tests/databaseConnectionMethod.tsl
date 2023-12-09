@@ -1,0 +1,12 @@
+
+Test Case 1  		<error>
+   tableName :  zero
+
+
+Test Case 2  		(Key = 2.)
+   tableName :  one
+
+
+Test Case 3  		<error>
+   tableName :  wrong
+
