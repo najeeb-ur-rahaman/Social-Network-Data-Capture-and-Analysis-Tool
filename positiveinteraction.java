@@ -10,7 +10,6 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-
 import javax.swing.*;
 import java.awt.*;
 import java.sql.Connection;
@@ -71,11 +70,11 @@ public class positiveinteraction {
         );
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
         CategoryAxis domainAxis = plot.getDomainAxis();
-        domainAxis.setCategoryMargin(0.25);
+        domainAxis.setCategoryMargin(0.5);
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         BarRenderer renderer = (BarRenderer) plot.getRenderer();
-        renderer.setItemMargin(0.05);
+        renderer.setItemMargin(0.1);
         return chart;
     }
     //mutated version 
