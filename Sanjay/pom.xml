@@ -4,6 +4,23 @@
   <artifactId>nlp</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <dependencies>
+	 <dependency>
+    <groupId>com.microsoft.sqlserver</groupId>
+    <artifactId>mssql-jdbc</artifactId>
+    <version>12.4.2.jre8</version>
+	</dependency>
+	  <dependency>
+    <groupId>org.jfree</groupId>
+    <artifactId>jfreechart</artifactId>
+    <!-- Replace 'x.y.z' with the version you want -->
+    <version>1.0.19</version>
+	</dependency>
+	  <dependency>
+    <groupId>org.jfree</groupId>
+    <artifactId>jcommon</artifactId>
+    <!-- Replace 'x.y.z' with the version you want -->
+    <version>1.0.23</version>
+	</dependency>
 	  <dependency>
 		  <groupId>edu.stanford.nlp</groupId>
 		  <artifactId>stanford-corenlp</artifactId>

@@ -1,4 +1,4 @@
-package youtubeAnalysis.Tests;
+package Tests.BlackBoxTests.specificationBasedTests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -174,7 +174,7 @@ class blackBoxTests {
 	        String tableName = "abc";
 	        try {
 	            ResultSet resultSet = databaseConnection.databaseConnectionMethod(tableName);
-	            assertNull(resultSet);
+	            assertEquals("es",resultSet);
 	        } catch (SQLException e) {		        	
 	        }
 	  }
@@ -327,7 +327,7 @@ class blackBoxTests {
 		        String result = CommentSentimentAnalysis.storeResultSet(resultSet);;
 		       
 		        assertEquals("Stored Successfully", result);
-		    }		  
+		    }		 
 }
 	  
 	  
