@@ -1,5 +1,4 @@
 package Final;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -9,7 +8,6 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -27,7 +25,7 @@ public class negativeinteraction extends ApplicationFrame {
         CategoryDataset dataset = createDataset();
         JFreeChart chart = createChart(dataset);
         ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
+        chartPanel.setPreferredSize(new java.awt.Dimension(1200, 800));
         setContentPane(chartPanel);
     }
     public static CategoryDataset createDataset() {
@@ -64,8 +62,7 @@ public class negativeinteraction extends ApplicationFrame {
         );
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
         CategoryAxis domainAxis = plot.getDomainAxis();
-        domainAxis.setCategoryMargin(0.25);
-
+        domainAxis.setCategoryMargin(0.8);
         return chart;
     }
 
@@ -77,7 +74,6 @@ public class negativeinteraction extends ApplicationFrame {
     }
     public static CategoryDataset MutatedcreateDataset() {
         DefaultCategoryDataset mutatedCategoryDataset = new DefaultCategoryDataset();
-
         try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
             String query = "SELECT id, title, like_count, dislike_count FROM video_data";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -89,7 +85,6 @@ public class negativeinteraction extends ApplicationFrame {
                         System.out.println("Title: " + videoTitle + ", Likes: " + totalLikes + ", Dislikes: " + totalDislikes);
                         double dislikeRatio = (totalLikes + totalDislikes != 0) ?
                                 (double) totalLikes / (totalLikes + totalDislikes) : Double.POSITIVE_INFINITY;
-
                         mutatedCategoryDataset.addValue(dislikeRatio, "Dislike Ratio", videoTitle);
                     }
                 }
