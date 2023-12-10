@@ -3,13 +3,12 @@ package Final;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.category.LineAndShapeRenderer;
-import org.jfree.data.category.CategoryDataset;
-import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 
@@ -18,9 +17,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class visualising_posts extends ApplicationFrame {
 
@@ -30,34 +26,35 @@ public class visualising_posts extends ApplicationFrame {
 
     public visualising_posts(String title) {
         super(title);
-        CategoryDataset dataset = createDataset();
+        XYSeriesCollection dataset = createDataset();
         JFreeChart chart = createChart(dataset);
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
         setContentPane(chartPanel);
     }
 
-    private CategoryDataset createDataset() {
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+    private XYSeriesCollection createDataset() {
+        XYSeriesCollection dataset = new XYSeriesCollection();
 
         try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
-            String query = "SELECT DATE_FORMAT(timestamp_column, '%H:%i') AS time_interval, " +
-                    "SUM(like_count) AS total_likes, " +
-                    "SUM(view_duration) AS total_view_duration " +
-                    "FROM video_data " +
-                    "GROUP BY time_interval";
+            String query = "SELECT duration, view_count, title FROM video_data";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 try (ResultSet resultSet = statement.executeQuery()) {
+                    XYSeries series = new XYSeries("Views");
+
                     while (resultSet.next()) {
-                        String timeInterval = resultSet.getString("time_interval");
-                        int totalLikes = resultSet.getInt("total_likes");
-                        int totalViewDuration = resultSet.getInt("total_view_duration");
+                        int videoLength = resultSet.getInt("duration");
+                        int totalViews = resultSet.getInt("view_count");
+                        String videoTitle = resultSet.getString("title");
 
-                        // Calculate the view time to likes ratio
-                        double viewToLikesRatio = (totalLikes != 0) ? (double) totalViewDuration / totalLikes : Double.POSITIVE_INFINITY;
+                        // Print statements for debugging
+                        System.out.println("Duration: " + videoLength + ", Views: " + totalViews + ", Title: " + videoTitle);
 
-                        dataset.addValue(viewToLikesRatio, "View Time to Likes Ratio", timeInterval);
+                        series.add(videoLength, totalViews);
+                        series.setKey(videoTitle);
                     }
+
+                    dataset.addSeries(series);
                 }
             }
         } catch (SQLException e) {
@@ -67,23 +64,26 @@ public class visualising_posts extends ApplicationFrame {
         return dataset;
     }
 
-    private JFreeChart createChart(CategoryDataset dataset) {
-        JFreeChart chart = ChartFactory.createLineChart(
-                "View Time to Likes Ratio Over Time Intervals",
-                "Time Intervals",
-                "View Time to Likes Ratio",
+    private JFreeChart createChart(XYSeriesCollection dataset) {
+        JFreeChart chart = ChartFactory.createScatterPlot(
+                "Views vs. Duration",
+                "Duration",
+                "Views",
                 dataset
         );
 
-        CategoryPlot plot = (CategoryPlot) chart.getPlot();
-        CategoryAxis domainAxis = plot.getDomainAxis();
-        domainAxis.setCategoryMargin(0.25);
+        XYPlot plot = (XYPlot) chart.getPlot();
+        NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
+        domainAxis.setTickUnit(new NumberTickUnit(1.0)); // Adjust the tick unit as needed
+
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        plot.setRenderer(renderer);
 
         return chart;
     }
 
     public static void main(String[] args) {
-        visualising_posts chart = new visualising_posts("View Time to Likes Ratio Over Time Intervals");
+        visualising_posts chart = new visualising_posts("Views vs. Duration");
         chart.pack();
         RefineryUtilities.centerFrameOnScreen(chart);
         chart.setVisible(true);
