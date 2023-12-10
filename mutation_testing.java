@@ -1,7 +1,6 @@
 package testing;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,13 +8,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.Map;
-
 import javax.swing.JFrame;
-
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.junit.jupiter.api.Test;
-
 import Final.Liketocommentsratio;
 import Final.MostPopular;
 import Final.TagsReader;
