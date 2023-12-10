@@ -35,25 +35,19 @@ public class negativeinteraction extends ApplicationFrame {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
         try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
-            String query = "SELECT DATE_FORMAT(timestamp_column, '%H:%i') AS time_interval, " +
-                    "SUM(like_count) AS total_likes, " +
-                    "SUM(dislike_count) AS total_dislikes, " +
-                    "SUM(view_duration) AS total_view_duration " +
-                    "FROM video_data " +
-                    "GROUP BY time_interval";
+            String query = "SELECT id, title, like_count, dislike_count FROM video_data";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 try (ResultSet resultSet = statement.executeQuery()) {
                     while (resultSet.next()) {
-                        String timeInterval = resultSet.getString("time_interval");
-                        int totalLikes = resultSet.getInt("total_likes");
-                        int totalDislikes = resultSet.getInt("total_dislikes");
-                        int totalViewDuration = resultSet.getInt("total_view_duration");
+                        String videoTitle = resultSet.getString("title");
+                        int totalLikes = resultSet.getInt("like_count");
+                        int totalDislikes = resultSet.getInt("dislike_count");
+                        System.out.println("Title: " + videoTitle + ", Likes: " + totalLikes + ", Dislikes: " + totalDislikes);
 
-                        // Calculate the dislike ratio
                         double dislikeRatio = (totalLikes + totalDislikes != 0) ?
                                 (double) totalDislikes / (totalLikes + totalDislikes) : Double.POSITIVE_INFINITY;
 
-                        dataset.addValue(dislikeRatio, "Dislike Ratio", timeInterval);
+                        dataset.addValue(dislikeRatio, "Dislike Ratio", videoTitle);
                     }
                 }
             }
@@ -65,9 +59,9 @@ public class negativeinteraction extends ApplicationFrame {
     }
 
     private JFreeChart createChart(CategoryDataset dataset) {
-        JFreeChart chart = ChartFactory.createLineChart(
-                "Dislike Ratio Over Time Intervals",
-                "Time Intervals",
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Dislike Ratio per Video",
+                "Videos",
                 "Dislike Ratio",
                 dataset
         );
@@ -80,7 +74,7 @@ public class negativeinteraction extends ApplicationFrame {
     }
 
     public static void main(String[] args) {
-        negativeinteraction chart = new negativeinteraction("Dislike Ratio Over Time Intervals");
+        negativeinteraction chart = new negativeinteraction("Dislike Ratio Per Video");
         chart.pack();
         RefineryUtilities.centerFrameOnScreen(chart);
         chart.setVisible(true);
