@@ -16,7 +16,6 @@ public class TagsReader {
 
     public static Map<String, Integer> tallyTagsFromDatabase() {
         Map<String, Integer> tagCounts = new LinkedHashMap<>();
-
         try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
             String query = "SELECT tags FROM video_data";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -45,7 +44,7 @@ public class TagsReader {
     public static void main(String[] args) {
         Map<String, Integer> tagCounts = tallyTagsFromDatabase();
     }
-    
+
     //mutated
     public static Map<String, Integer> tallyTagsFromDatabaseMutated() {
         Map<String, Integer> tagCounts_mutated = new LinkedHashMap<>();
