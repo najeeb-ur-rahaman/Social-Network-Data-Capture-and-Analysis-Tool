@@ -5,7 +5,6 @@ import Final.Liketocommentsratio;
 import Final.MostPopular;
 import Final.TagsReader;
 import Final.negativeinteraction;
-
 import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -13,27 +12,24 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-
 import javax.swing.*;
 import java.awt.*;
 
 
 public class branch_testing {
 
-	//these are the branch tests for like to comments ratio
+//these are the branch tests for like to comments ratio
     //tests if it works
     @Test
     public void testWithRegularData() {
