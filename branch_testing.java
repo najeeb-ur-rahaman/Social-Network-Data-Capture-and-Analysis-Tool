@@ -29,7 +29,7 @@ import java.awt.*;
 
 public class branch_testing {
 
-//these are the branch tests for like to comments ratio
+	//these are the branch tests for like to comments ratio
     //tests if it works
     @Test
     public void testWithRegularData() {
@@ -112,52 +112,7 @@ public class branch_testing {
         assertNotNull("Chart should not be null", chart);
     }
     
-    //actually checking if its emppty 
-    private boolean isEmptyDataset1(CategoryDataset dataset) {
-        return dataset.getColumnKeys().isEmpty();
-    }
-    
-    //positive testing 
-    public class ChartTesterPositiveInteraction {
-        private static void createAndShowGui() {
-            JFrame chartFrame = new JFrame("Video with Most Likes");
-            chartFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            //dataset time
-            CategoryDataset dataset = createValidDataset();
-            JFreeChart chart = createChart(dataset);
-            ChartPanel chartPanel = new ChartPanel(chart);
-            chartPanel.setPreferredSize(new Dimension(600, 400));
-            chartFrame.setContentPane(chartPanel);
-            chartFrame.pack();
-            chartFrame.setLocationRelativeTo(null);
-            chartFrame.setVisible(true);
-        }
 
-        //gotta create a fake dataset to test it
-        private static CategoryDataset createValidDataset() {
-            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-            dataset.addValue(1120, "Likes", "New vid");
-            dataset.addValue(801, "Likes", "Crzzy vid");
-            dataset.addValue(12212, "Likes", "Wow much vid much wow");
-            return dataset;
-        }
-        //make the graph to test
-        private static JFreeChart createChart(CategoryDataset dataset) {
-            return ChartFactory.createBarChart(
-                    "Videos",
-                    "Likes",
-                    null, dataset,
-                    PlotOrientation.VERTICAL,
-                    true,
-                    true,
-                    false
-            );
-        }
-        public static void main(String[] args) {
-            SwingUtilities.invokeLater(() -> createAndShowGui());
-        }
-    }
-    
     //tag time 
     @Test
     //testing if this works with 0 tags 
