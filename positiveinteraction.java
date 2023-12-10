@@ -81,12 +81,12 @@ public class positiveinteraction {
     public static CategoryDataset createMutatedDataset() {
         DefaultCategoryDataset mutatedDataset = new DefaultCategoryDataset();
         try (Connection mutatedConnection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
-            String mutatedQuery = "SELECT mutated_title, mutated_like_count FROM mutated_video_data ORDER BY mutated_like_count DESC LIMIT 5";
+            String mutatedQuery = "SELECT title, like_count FROM video_data ORDER BY like_count DESC LIMIT 5";
             try (PreparedStatement mutatedStatement = mutatedConnection.prepareStatement(mutatedQuery)) {
                 try (ResultSet mutatedResultSet = mutatedStatement.executeQuery()) {
                     while (mutatedResultSet.next()) {
-                        String mutatedTitle = mutatedResultSet.getString("mutated_title");
-                        int mutatedLikeCount = mutatedResultSet.getInt("mutated_like_count");
+                        String mutatedTitle = mutatedResultSet.getString("title");
+                        int mutatedLikeCount = mutatedResultSet.getInt("like_count");
 
                         mutatedDataset.addValue(mutatedLikeCount, "Mutated Likes", mutatedTitle);
                     }
