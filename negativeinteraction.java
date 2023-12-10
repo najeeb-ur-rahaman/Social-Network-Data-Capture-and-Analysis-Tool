@@ -30,10 +30,8 @@ public class negativeinteraction extends ApplicationFrame {
         chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
         setContentPane(chartPanel);
     }
-
-    private CategoryDataset createDataset() {
+    public static CategoryDataset createDataset() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-
         try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
             String query = "SELECT id, title, like_count, dislike_count FROM video_data";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -57,15 +55,13 @@ public class negativeinteraction extends ApplicationFrame {
 
         return dataset;
     }
-
-    private JFreeChart createChart(CategoryDataset dataset) {
+    public static JFreeChart createChart(CategoryDataset dataset) {
         JFreeChart chart = ChartFactory.createBarChart(
                 "Dislike Ratio per Video",
                 "Videos",
                 "Dislike Ratio",
                 dataset
         );
-
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
         CategoryAxis domainAxis = plot.getDomainAxis();
         domainAxis.setCategoryMargin(0.25);
@@ -79,4 +75,30 @@ public class negativeinteraction extends ApplicationFrame {
         RefineryUtilities.centerFrameOnScreen(chart);
         chart.setVisible(true);
     }
+    public static CategoryDataset MutatedcreateDataset() {
+        DefaultCategoryDataset mutatedCategoryDataset = new DefaultCategoryDataset();
+
+        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
+            String query = "SELECT id, title, like_count, dislike_count FROM video_data";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        String videoTitle = resultSet.getString("title");
+                        int totalLikes = resultSet.getInt("like_count");
+                        int totalDislikes = resultSet.getInt("dislike_count");
+                        System.out.println("Title: " + videoTitle + ", Likes: " + totalLikes + ", Dislikes: " + totalDislikes);
+                        double dislikeRatio = (totalLikes + totalDislikes != 0) ?
+                                (double) totalLikes / (totalLikes + totalDislikes) : Double.POSITIVE_INFINITY;
+
+                        mutatedCategoryDataset.addValue(dislikeRatio, "Dislike Ratio", videoTitle);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return mutatedCategoryDataset;
+    }
+
 }
