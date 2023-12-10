@@ -39,8 +39,8 @@ public class Liketocommentsratio {
                             double ratio = (comments != 0) ? (double) likes / comments : Double.POSITIVE_INFINITY;
                             
                             String formattedRatio = ratioFormat.format(ratio);
-                            System.out.println("Video Title: " + title);
-                            System.out.println("Ratio of likes to comments: " + formattedRatio);
+                            System.out.println("Video Title -  " + title);
+                            System.out.println("Ratio -  " + formattedRatio);
                         }
                     }
                 }
@@ -65,8 +65,8 @@ public class Liketocommentsratio {
                             double ratio = (comments != 0) ? (double) comments / likes : Double.POSITIVE_INFINITY;
                             
                             String formattedRatio = ratioFormat.format(ratio);
-                            System.out.println("Video Title: " + title);
-                            System.out.println("Ratio of likes to comments (Mutation 1): " + formattedRatio);
+                            System.out.println("Video Title -  " + title);
+                            System.out.println("Ratio (Mutation 1) -  " + formattedRatio);
                         }
                     }
                 }
