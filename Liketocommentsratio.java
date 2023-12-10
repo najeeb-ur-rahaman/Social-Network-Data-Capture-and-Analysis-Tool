@@ -14,27 +14,26 @@ public class Liketocommentsratio {
 
     public static void main(String[] args) {
         try {
-            calculateAndPrintRatioForEachVideo();
+            ratio();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private static void calculateAndPrintRatioForEachVideo() throws SQLException {
-        DecimalFormat ratioFormat = new DecimalFormat("#.##");
+    private static void ratio() throws SQLException {
+        DecimalFormat ratioFormat = new DecimalFormat("#.#");
         try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
             String query = "SELECT id, title, like_count, comment_count FROM video_data";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 try (ResultSet resultSet = statement.executeQuery()) {
                     while (resultSet.next()) {
-                        String videoId = resultSet.getString("id");
                         String title = resultSet.getString("title");
                         int likes = resultSet.getInt("like_count");
                         int comments = resultSet.getInt("comment_count");
                         double ratio = (comments != 0) ? (double) likes / comments : Double.POSITIVE_INFINITY;
                         String formattedRatio = ratioFormat.format(ratio);
                         System.out.println("Video Title: " + title);
-                        System.out.println("Likes to Comment Ratio: " + formattedRatio);
+                        System.out.println("Ratio of likes to comments: " + formattedRatio);
                     }
                 }
             }
