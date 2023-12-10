@@ -11,14 +11,12 @@
 	</dependency>
 	  <dependency>
     <groupId>org.jfree</groupId>
-    <artifactId>jfreechart</artifactId>
-    <!-- Replace 'x.y.z' with the version you want -->
+    <artifactId>jfreechart</artifactId>  
     <version>1.0.19</version>
 	</dependency>
 	  <dependency>
     <groupId>org.jfree</groupId>
     <artifactId>jcommon</artifactId>
-    <!-- Replace 'x.y.z' with the version you want -->
     <version>1.0.23</version>
 	</dependency>
 	  <dependency>
@@ -37,6 +35,11 @@
        <artifactId>slf4j-api</artifactId>
        <version>1.7.5</version>
    </dependency>
+   <dependency>
+    <groupId>org.pitest</groupId>
+    <artifactId>pitest-maven</artifactId>
+    <version>1.15.3</version>
+	</dependency>
    <dependency>
        <groupId>org.slf4j</groupId>
        <artifactId>slf4j-log4j12</artifactId>
@@ -59,6 +62,11 @@
           <release>20</release>
         </configuration>
       </plugin>
+      <plugin>
+    <groupId>org.pitest</groupId>
+    <artifactId>pitest-maven</artifactId>
+    <version>1.7.3</version>
+</plugin>
     </plugins>
   </build>
 </project>

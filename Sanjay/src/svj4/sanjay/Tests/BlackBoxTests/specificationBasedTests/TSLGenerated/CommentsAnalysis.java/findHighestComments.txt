@@ -1,0 +1,11 @@
+#findHighestComments
+	videoValueInt:
+		empty.	[property empty]
+		one. 	[property one]
+		oneValue.	[single]
+		nonEmpty.	[property many]
+	videoTitles:
+		empty.		[if empty]
+		one.		[if one]
+		nonEmpty. 		[if many]
+		oneTitle.	[single]

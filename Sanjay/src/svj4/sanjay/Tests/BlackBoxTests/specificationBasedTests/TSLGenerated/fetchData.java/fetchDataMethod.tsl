@@ -1,0 +1,12 @@
+
+Test Case 1  		(Key = 1.)
+   results :  emptyResults
+
+
+Test Case 2  		(Key = 2.)
+   results :  null
+
+
+Test Case 3  		(Key = 3.)
+   results :  validResults
+

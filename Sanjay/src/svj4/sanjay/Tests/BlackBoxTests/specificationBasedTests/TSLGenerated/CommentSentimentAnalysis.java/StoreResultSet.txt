@@ -1,0 +1,4 @@
+#StoreResultSet
+	results:
+		empty.
+		nonEmpty.

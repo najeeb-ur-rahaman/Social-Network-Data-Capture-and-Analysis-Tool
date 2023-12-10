@@ -1,0 +1,4 @@
+#sentimentAnalysisGraph
+	dataSet:
+		empty.
+		nonEmpty.

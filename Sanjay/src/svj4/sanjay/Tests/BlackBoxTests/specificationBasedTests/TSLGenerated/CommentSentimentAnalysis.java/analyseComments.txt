@@ -1,0 +1,7 @@
+#analyseComments
+	linesList:
+		empty.
+		negativeLines.
+		positiveLines.
+		veryPositiveLines.
+		neutralLines.

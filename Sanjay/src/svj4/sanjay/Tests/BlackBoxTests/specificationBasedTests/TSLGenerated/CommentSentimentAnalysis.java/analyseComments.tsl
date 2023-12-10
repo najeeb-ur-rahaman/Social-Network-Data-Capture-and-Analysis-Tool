@@ -1,0 +1,20 @@
+
+Test Case 1  		(Key = 1.)
+   linesList :  empty
+
+
+Test Case 2  		(Key = 2.)
+   linesList :  negativeLines
+
+
+Test Case 3  		(Key = 3.)
+   linesList :  positiveLines
+
+
+Test Case 4  		(Key = 4.)
+   linesList :  veryPositiveLines
+
+
+Test Case 5  		(Key = 5.)
+   linesList :  neutralLines
+

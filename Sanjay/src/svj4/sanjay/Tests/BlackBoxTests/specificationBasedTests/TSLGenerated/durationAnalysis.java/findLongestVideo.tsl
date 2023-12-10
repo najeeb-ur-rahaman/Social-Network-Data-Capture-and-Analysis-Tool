@@ -1,0 +1,16 @@
+
+Test Case 1  		(Key = 1.)
+   videoValueInt :  nonEmpty
+
+
+Test Case 2  		(Key = 2.)
+   videoValueInt :  single
+
+
+Test Case 3  		(Key = 3.)
+   videoValueInt :  empty
+
+
+Test Case 4  		(Key = 4.)
+   videoValueInt :  nullInput
+

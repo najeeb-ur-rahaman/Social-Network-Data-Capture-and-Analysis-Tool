@@ -1,0 +1,8 @@
+#findLongestVideo
+	videoValueInt:
+		nonEmpty.
+		single.
+		empty.
+		nullInput.
+		
+	

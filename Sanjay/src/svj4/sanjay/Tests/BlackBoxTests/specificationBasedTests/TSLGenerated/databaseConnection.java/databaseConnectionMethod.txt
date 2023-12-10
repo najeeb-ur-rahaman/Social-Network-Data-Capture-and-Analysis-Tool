@@ -1,0 +1,7 @@
+#databaseConnectionMethod
+	tableName:
+		validTable.
+		inavlidTable.
+
+		
+	

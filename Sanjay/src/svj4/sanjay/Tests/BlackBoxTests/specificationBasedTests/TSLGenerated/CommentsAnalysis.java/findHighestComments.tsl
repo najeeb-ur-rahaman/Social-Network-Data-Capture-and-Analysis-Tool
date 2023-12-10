@@ -1,0 +1,23 @@
+
+Test Case 1  		<single>
+   videoValueInt :  oneValue
+
+
+Test Case 2  		<single>
+   videoTitles :  oneTitle
+
+
+Test Case 3  		(Key = 1.1.)
+   videoValueInt :  empty
+   videoTitles   :  empty
+
+
+Test Case 4  		(Key = 2.2.)
+   videoValueInt :  one
+   videoTitles   :  one
+
+
+Test Case 5  		(Key = 4.3.)
+   videoValueInt :  nonEmpty
+   videoTitles   :  nonEmpty
+
