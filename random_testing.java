@@ -72,8 +72,8 @@ public class random_testing {
         Random random = new Random();
         for (int i = 0; i < 5; i++) {
             String videoTitle = "Video" + i;
-            int totalLikes = random.nextInt(1000);
-            int totalDislikes = random.nextInt(500);
+            int totalLikes = random.nextInt(1250);
+            int totalDislikes = random.nextInt(652);
             System.out.println("Title: " + videoTitle + ", Likes: " + totalLikes + ", Dislikes: " + totalDislikes);
             double dislikeRatio = (totalLikes + totalDislikes != 0) ?
                     (double) totalDislikes / (totalLikes + totalDislikes) : Double.POSITIVE_INFINITY;
