@@ -20,7 +20,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class positiveinteraction {
-
     private static final String JDBC_URL = "jdbc:mysql://localhost:3306/testingtestingtesting";
     private static final String JDBC_USER = "George";
     private static final String JDBC_PASSWORD = "George02!";
@@ -28,26 +27,20 @@ public class positiveinteraction {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> createAndShowGui());
     }
-
     private static void createAndShowGui() {
         JFrame frame = new JFrame("Video with Most Likes");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         CategoryDataset dataset = createDataset();
         JFreeChart chart = createChart(dataset);
-
         ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(600, 400));
+        chartPanel.setPreferredSize(new Dimension(1200, 800));
         frame.setContentPane(chartPanel);
-
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
-
-    private static CategoryDataset createDataset() {
+    public static CategoryDataset createDataset() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-
         try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
             String query = "SELECT title, like_count FROM video_data ORDER BY like_count DESC LIMIT 5";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -63,10 +56,8 @@ public class positiveinteraction {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return dataset;
     }
-
     private static JFreeChart createChart(CategoryDataset dataset) {
         JFreeChart chart = ChartFactory.createBarChart(
                 "Top 5 Videos with Most Likes",
@@ -78,17 +69,33 @@ public class positiveinteraction {
                 true,
                 false
         );
-
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
         CategoryAxis domainAxis = plot.getDomainAxis();
         domainAxis.setCategoryMargin(0.25);
-
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
         BarRenderer renderer = (BarRenderer) plot.getRenderer();
         renderer.setItemMargin(0.05);
-
         return chart;
+    }
+    //mutated version 
+    public static CategoryDataset createMutatedDataset() {
+        DefaultCategoryDataset mutatedDataset = new DefaultCategoryDataset();
+        try (Connection mutatedConnection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
+            String mutatedQuery = "SELECT mutated_title, mutated_like_count FROM mutated_video_data ORDER BY mutated_like_count DESC LIMIT 5";
+            try (PreparedStatement mutatedStatement = mutatedConnection.prepareStatement(mutatedQuery)) {
+                try (ResultSet mutatedResultSet = mutatedStatement.executeQuery()) {
+                    while (mutatedResultSet.next()) {
+                        String mutatedTitle = mutatedResultSet.getString("mutated_title");
+                        int mutatedLikeCount = mutatedResultSet.getInt("mutated_like_count");
+
+                        mutatedDataset.addValue(mutatedLikeCount, "Mutated Likes", mutatedTitle);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return mutatedDataset;
     }
 }
