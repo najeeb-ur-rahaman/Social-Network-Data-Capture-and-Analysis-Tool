@@ -10,11 +10,8 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-
 import javax.swing.*;
-
 import static org.junit.Assert.assertNotNull;
-
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -50,7 +47,6 @@ public class MostPopular {
 
     public static CategoryDataset createDataset() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-
         try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
             String query = "SELECT title, like_count, view_count FROM video_data";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -60,7 +56,6 @@ public class MostPopular {
                         int likeCount = resultSet.getInt("like_count");
                         int viewCount = resultSet.getInt("view_count");
                         double likeToViewRatio = (viewCount != 0) ? (double) likeCount / viewCount : Double.POSITIVE_INFINITY;
-
                         dataset.addValue(likeToViewRatio, "Like to View Ratio", title);
                     }
                 }
@@ -105,14 +100,11 @@ public class MostPopular {
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 try (ResultSet resultSet = statement.executeQuery()) {
                     while (resultSet.next()) {
-                        // Introduce mutation by setting title to null
                         String title = resultSet.getString("title");
-                        title = null;  // Introduce mutation
-
+                        title = null;
                         int likeCount = resultSet.getInt("like_count");
                         int viewCount = resultSet.getInt("view_count");
                         double likeToViewRatio = (viewCount != 0) ? (double) likeCount / viewCount : Double.POSITIVE_INFINITY;
-
                         mutatedCategoryDataset.addValue(likeToViewRatio, "Like to View Ratio", title);
                     }
                 }
