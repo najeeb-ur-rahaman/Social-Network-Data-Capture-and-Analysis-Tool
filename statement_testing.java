@@ -1,11 +1,9 @@
 package testing;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.junit.jupiter.api.Test;
-
 import Final.Liketocommentsratio;
 import Final.MostPopular;
 import Final.positiveinteraction;
