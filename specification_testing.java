@@ -1,17 +1,13 @@
 package testing;
-
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.junit.jupiter.api.Test;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-
 import Final.Liketocommentsratio;
 import Final.MostPopular;
 import Final.TagsReader;
